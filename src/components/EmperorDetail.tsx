@@ -1,10 +1,11 @@
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import type { PersonRecord } from '../types/domain'
 
 interface EmperorDetailProps {
   person: PersonRecord
   onLoadDescendants: () => Promise<void>
   isLoadingDescendants: boolean
-  descendantLoadMessage?: string
   onLoadAllConnections?: () => Promise<void>
   onCancelLoadAllConnections?: () => void
   isLoadingAllConnections?: boolean
@@ -125,12 +126,15 @@ export function EmperorDetail({
   person,
   onLoadDescendants,
   isLoadingDescendants,
-  descendantLoadMessage,
   onLoadAllConnections,
   onCancelLoadAllConnections,
   isLoadingAllConnections,
   loadAllProgress,
 }: EmperorDetailProps) {
+  const IMAGE_CLOSE_MS = 220
+  const [isImageZoomed, setIsImageZoomed] = useState(false)
+  const [isClosingImage, setIsClosingImage] = useState(false)
+  const closeTimerRef = useRef<number | undefined>(undefined)
   const isEmperor = person.isEmperor
   const extract = person.shortBio
   const imageUrl = person.imageUrl
@@ -142,15 +146,71 @@ export function EmperorDetail({
   const reignLengthYears = calculateReignLengthYears(reignStart, reignEnd)
   const ageAtDeathYears = calculateAgeAtDeathYears(birthDate, deathDate)
 
+  const closeImagePreview = () => {
+    setIsClosingImage(true)
+    closeTimerRef.current = window.setTimeout(() => {
+      setIsImageZoomed(false)
+      setIsClosingImage(false)
+      closeTimerRef.current = undefined
+    }, IMAGE_CLOSE_MS)
+  }
+
+  useEffect(() => {
+    if (!isImageZoomed || isClosingImage) {
+      return undefined
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeImagePreview()
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [isClosingImage, isImageZoomed])
+
+  useEffect(() => () => {
+    if (closeTimerRef.current !== undefined) {
+      window.clearTimeout(closeTimerRef.current)
+    }
+  }, [])
+
+  const openImagePreview = () => {
+    if (closeTimerRef.current !== undefined) {
+      window.clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = undefined
+    }
+    setIsClosingImage(false)
+    setIsImageZoomed(true)
+  }
+
   return (
     <article className="detail-card">
       {imageUrl ? (
-        <img
-          src={imageUrl}
-          alt={person.name}
-          className="portrait"
-          loading="lazy"
-        />
+        <>
+          <button
+            type="button"
+            className="portrait-trigger"
+            onClick={() => {
+              openImagePreview()
+            }}
+            aria-label={`View full portrait of ${person.name}`}
+          >
+            <img
+              src={imageUrl}
+              alt={person.name}
+              className="portrait"
+              loading="lazy"
+            />
+            <span className="portrait-expand-hint" aria-hidden="true">
+              <span className="portrait-expand-corners" />
+              <span className="portrait-expand-label">Expand</span>
+            </span>
+          </button>
+        </>
       ) : (
         <div className="portrait portrait-empty" aria-label="No image available">
           N/A
@@ -241,8 +301,41 @@ export function EmperorDetail({
         {!isEmperor ? (
           <p className="status-line">Descendant loading is available for emperors only.</p>
         ) : null}
-        {descendantLoadMessage ? <p className="status-line">{descendantLoadMessage}</p> : null}
       </section>
+
+      {imageUrl && isImageZoomed
+        ? createPortal(
+          <div
+            className={`image-lightbox ${isClosingImage ? 'image-lightbox--closing' : ''}`}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Expanded portrait of ${person.name}`}
+            onClick={closeImagePreview}
+          >
+            <div
+              className={`image-lightbox-panel ${isClosingImage ? 'image-lightbox-panel--closing' : ''}`}
+              onClick={(event) => {
+                event.stopPropagation()
+              }}
+            >
+              <button
+                type="button"
+                className="image-lightbox-close subtle-icon-close"
+                onClick={closeImagePreview}
+                aria-label="Close image preview"
+              >
+                ×
+              </button>
+              <img
+                src={imageUrl}
+                alt={person.name}
+                className="image-lightbox-image"
+              />
+            </div>
+          </div>,
+          document.body,
+        )
+        : null}
     </article>
   )
 }

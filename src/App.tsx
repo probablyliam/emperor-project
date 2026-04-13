@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { EmperorDetail } from './components/EmperorDetail'
 import { EmperorGraph } from './components/EmperorGraph'
@@ -67,6 +67,17 @@ function relationPriority(label: string) {
   return 3
 }
 
+type ToastKind = 'success' | 'error' | 'warning'
+
+interface ToastState {
+  id: number
+  kind: ToastKind
+  message: string
+}
+
+const TOAST_VISIBLE_MS = 11400
+const TOAST_CLOSE_MS = 280
+
 function App() {
   const descendantsDataset = precomputedDescendants as PrecomputedDescendantsData
   const personMetadataById = (descendantsDataset.personMetadataById ?? {}) as Record<string, PrecomputedPersonMetadata>
@@ -75,7 +86,7 @@ function App() {
   const [dynamicPeople, setDynamicPeople] = useState<PersonRecord[]>([])
   const [dynamicRelationships, setDynamicRelationships] = useState<RelationshipEdge[]>([])
   const [loadingDescendantsForId, setLoadingDescendantsForId] = useState<string | undefined>()
-  const [descendantLoadMessage, setDescendantLoadMessage] = useState<string | undefined>()
+  const [toast, setToast] = useState<ToastState | undefined>()
   const [loadedPersonIds, setLoadedPersonIds] = useState<Set<string>>(() => new Set())
   const [isLoadingAll, setIsLoadingAll] = useState(false)
   const [loadAllProgress, setLoadAllProgress] = useState<{ done: number; total: number } | undefined>()
@@ -83,6 +94,10 @@ function App() {
   const dynamicRelationshipsRef = useRef<RelationshipEdge[]>([])
   const loadedPersonIdsRef = useRef<Set<string>>(loadedPersonIds)
   const loadAllCancelledRef = useRef(false)
+  const toastIdRef = useRef(0)
+  const toastTimerRef = useRef<number | undefined>(undefined)
+  const toastCloseTimerRef = useRef<number | undefined>(undefined)
+  const [isToastClosing, setIsToastClosing] = useState(false)
 
   if (dynamicRelationshipsRef.current !== dynamicRelationships) {
     dynamicRelationshipsRef.current = dynamicRelationships
@@ -91,6 +106,69 @@ function App() {
   if (loadedPersonIdsRef.current !== loadedPersonIds) {
     loadedPersonIdsRef.current = loadedPersonIds
   }
+
+  const showToast = (message: string, kind: ToastKind) => {
+    toastIdRef.current += 1
+
+    if (toastTimerRef.current !== undefined) {
+      window.clearTimeout(toastTimerRef.current)
+    }
+
+    if (toastCloseTimerRef.current !== undefined) {
+      window.clearTimeout(toastCloseTimerRef.current)
+      toastCloseTimerRef.current = undefined
+    }
+
+    setIsToastClosing(false)
+
+    setToast({
+      id: toastIdRef.current,
+      kind,
+      message,
+    })
+
+    toastTimerRef.current = window.setTimeout(() => {
+      toastTimerRef.current = undefined
+      setIsToastClosing(true)
+      toastCloseTimerRef.current = window.setTimeout(() => {
+        setToast(undefined)
+        setIsToastClosing(false)
+        toastCloseTimerRef.current = undefined
+      }, TOAST_CLOSE_MS)
+    }, TOAST_VISIBLE_MS)
+  }
+
+  const dismissToast = () => {
+    if (!toast || isToastClosing) {
+      return
+    }
+
+    if (toastTimerRef.current !== undefined) {
+      window.clearTimeout(toastTimerRef.current)
+      toastTimerRef.current = undefined
+    }
+
+    if (toastCloseTimerRef.current !== undefined) {
+      window.clearTimeout(toastCloseTimerRef.current)
+    }
+
+    setIsToastClosing(true)
+    toastCloseTimerRef.current = window.setTimeout(() => {
+      setToast(undefined)
+      setIsToastClosing(false)
+      toastCloseTimerRef.current = undefined
+    }, TOAST_CLOSE_MS)
+  }
+
+  useEffect(() => () => {
+    if (toastTimerRef.current !== undefined) {
+      window.clearTimeout(toastTimerRef.current)
+    }
+
+    if (toastCloseTimerRef.current !== undefined) {
+      window.clearTimeout(toastCloseTimerRef.current)
+    }
+  }, [])
 
   const applyMetadata = (person: PersonRecord): PersonRecord => {
     const metadata = personMetadataById[person.id]
@@ -179,6 +257,7 @@ function App() {
     personId: string,
     options?: { bulk?: boolean; suppressMessage?: boolean },
   ) => {
+    const wasAlreadyLoaded = loadedPersonIdsRef.current.has(personId)
     const selected = seedWesternEmperors.people.find((person) => person.id === personId)
     if (!selected) {
       return { addedEdges: 0, upgradedEdges: 0 }
@@ -186,30 +265,34 @@ function App() {
 
     if (!selected.isEmperor) {
       if (!options?.suppressMessage) {
-        setDescendantLoadMessage('Descendant loading is only available for emperors.')
+        showToast('Descendant loading is only available for emperors.', 'warning')
       }
       return { addedEdges: 0, upgradedEdges: 0 }
     }
 
     if (options?.bulk && loadedPersonIdsRef.current.has(personId)) {
       if (!options?.suppressMessage) {
-        setDescendantLoadMessage('Descendants already loaded for this emperor.')
+        showToast('Descendants already loaded for this emperor.', 'warning')
+      }
+      return { addedEdges: 0, upgradedEdges: 0 }
+    }
+
+    if (!options?.bulk && wasAlreadyLoaded) {
+      if (!options?.suppressMessage) {
+        showToast('Descendants already loaded for this emperor.', 'warning')
       }
       return { addedEdges: 0, upgradedEdges: 0 }
     }
 
     if (!options?.bulk) {
       setLoadingDescendantsForId(selected.id)
-      if (!options?.suppressMessage) {
-        setDescendantLoadMessage(undefined)
-      }
     }
 
     try {
       const precomputed = descendantsDataset.emperors[personId]
       if (!precomputed) {
         if (!options?.suppressMessage) {
-          setDescendantLoadMessage('No precomputed descendants found for this emperor. Run the generator script first.')
+          showToast('No precomputed descendants found for this emperor. Run the generator script first.', 'error')
         }
         return { addedEdges: 0, upgradedEdges: 0 }
       }
@@ -258,16 +341,14 @@ function App() {
       })
 
       if (!options?.suppressMessage) {
-        if (addedEdgesCount > 0) {
-          setDescendantLoadMessage(
-            `Loaded ${addedEdgesCount} descendant link${addedEdgesCount === 1 ? '' : 's'} from precomputed data.`,
-          )
-        } else if (upgradedEdgesCount > 0) {
-          setDescendantLoadMessage(
-            `Updated ${upgradedEdgesCount} relationship link${upgradedEdgesCount === 1 ? '' : 's'} as adoptive.`,
+        const totalChanges = addedEdgesCount + upgradedEdgesCount
+        if (totalChanges > 0) {
+          showToast(
+            `Descendants loaded successfully (${totalChanges} link${totalChanges === 1 ? '' : 's'}).`,
+            'success',
           )
         } else {
-          setDescendantLoadMessage('Relevant descendant connections were already present in the graph.')
+          showToast('Descendants loaded successfully.', 'success')
         }
       }
 
@@ -278,7 +359,7 @@ function App() {
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error'
       if (!options?.suppressMessage) {
-        setDescendantLoadMessage(`Descendant loading failed: ${message}`)
+        showToast(`Descendant loading failed: ${message}`, 'error')
       }
 
       return { addedEdges: 0, upgradedEdges: 0 }
@@ -304,19 +385,18 @@ function App() {
 
     const remaining = emperorIds.filter((personId) => !loadedPersonIdsRef.current.has(personId))
     if (remaining.length === 0) {
-      setDescendantLoadMessage('All emperor descendants are already loaded.')
+      showToast('All emperor descendants are already loaded.', 'warning')
       return
     }
 
     loadAllCancelledRef.current = false
     setIsLoadingAll(true)
-    setDescendantLoadMessage('Loading all emperor descendants from precomputed JSON.')
     setLoadAllProgress({ done: 0, total: remaining.length })
 
     try {
       for (let index = 0; index < remaining.length; index += 1) {
         if (loadAllCancelledRef.current) {
-          setDescendantLoadMessage('Load all cancelled.')
+          showToast('Load all cancelled.', 'warning')
           return
         }
 
@@ -328,9 +408,9 @@ function App() {
         setLoadAllProgress({ done: index + 1, total: remaining.length })
       }
 
-      setDescendantLoadMessage('All emperor descendants loaded.')
+      showToast('All emperor descendants loaded.', 'success')
     } catch {
-      setDescendantLoadMessage('Load all failed before completion. You can retry to continue.')
+      showToast('Load all failed before completion. You can retry to continue.', 'error')
     } finally {
       loadAllCancelledRef.current = false
       setIsLoadingAll(false)
@@ -346,6 +426,25 @@ function App() {
 
   return (
     <main className="app-shell">
+      {toast ? (
+        <div
+          key={toast.id}
+          className={`top-toast top-toast--${toast.kind} ${isToastClosing ? 'top-toast--closing' : ''}`}
+          role="status"
+          aria-live="polite"
+        >
+          <span className="top-toast-message">{toast.message}</span>
+          <button
+            type="button"
+            className="subtle-icon-close"
+            onClick={dismissToast}
+            aria-label="Dismiss notification"
+          >
+            ×
+          </button>
+        </div>
+      ) : null}
+
       <EmperorGraph
         elements={elements}
         selectedId={selectedPerson.id}
@@ -362,7 +461,6 @@ function App() {
           person={selectedPerson}
           onLoadDescendants={loadDescendantsForSelected}
           isLoadingDescendants={loadingDescendantsForId === selectedPerson.id}
-          descendantLoadMessage={descendantLoadMessage}
           onLoadAllConnections={loadAllConnections}
           onCancelLoadAllConnections={cancelLoadAllConnections}
           isLoadingAllConnections={isLoadingAll}
