@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-04-12",
+  "generatedAt": "2026-04-13",
   "source": "wikidata",
   "maxDescendantDepthFromSelected": 4,
-  "emperorCountGenerated": 60,
+  "emperorCountGenerated": 84,
   "emperors": {
     "augustus": {
       "people": [
@@ -3985,6 +3985,955 @@
           ]
         }
       ]
+    },
+    "constantine-ii": {
+      "people": [],
+      "relationships": []
+    },
+    "constans": {
+      "people": [],
+      "relationships": []
+    },
+    "constantius-ii": {
+      "people": [
+        {
+          "id": "lineage-constantia-wife-of-gratian-",
+          "name": "Constantia",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Constantia (wife of Gratian)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Constantia_(wife_of_Gratian)"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-constantius-ii-lineage-constantia-wife-of-gratian-",
+          "from": "constantius-ii",
+          "to": "lineage-constantia-wife-of-gratian-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Constantius_II",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "julian": {
+      "people": [
+        {
+          "id": "lineage-lineage-q114712319",
+          "name": "Flavius",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Flavius",
+          "wikipediaUrl": "https://www.wikidata.org/wiki/Q114712319"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-julian-lineage-lineage-q114712319",
+          "from": "julian",
+          "to": "lineage-lineage-q114712319",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Julian_(emperor)",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "jovian": {
+      "people": [
+        {
+          "id": "lineage-varronianus-son-of-jovian-",
+          "name": "Varronianus",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Varronianus (son of Jovian)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Varronianus_(son_of_Jovian)"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-jovian-lineage-varronianus-son-of-jovian-",
+          "from": "jovian",
+          "to": "lineage-varronianus-son-of-jovian-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Jovian_(emperor)",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "valentinian-i": {
+      "people": [
+        {
+          "id": "lineage-galla-wife-of-theodosius-i-",
+          "name": "Galla",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Galla (wife of Theodosius I)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Galla_(wife_of_Theodosius_I)"
+        },
+        {
+          "id": "lineage-galla-placidia",
+          "name": "Galla Placidia",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Galla Placidia",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Galla_Placidia"
+        },
+        {
+          "id": "lineage-lineage-q3775841",
+          "name": "Grata",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Grata",
+          "wikipediaUrl": "https://www.wikidata.org/wiki/Q3775841"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-valentinian-i-gratian",
+          "from": "valentinian-i",
+          "to": "gratian",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Valentinian_I",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-valentinian-i-lineage-galla-wife-of-theodosius-i-",
+          "from": "valentinian-i",
+          "to": "lineage-galla-wife-of-theodosius-i-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Valentinian_I",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-lineage-galla-wife-of-theodosius-i--lineage-galla-placidia",
+          "from": "lineage-galla-wife-of-theodosius-i-",
+          "to": "lineage-galla-placidia",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Galla_(wife_of_Theodosius_I)",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-lineage-galla-placidia-valentinian-iii",
+          "from": "lineage-galla-placidia",
+          "to": "valentinian-iii",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Galla_Placidia",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-valentinian-i-valentinian-ii",
+          "from": "valentinian-i",
+          "to": "valentinian-ii",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Valentinian_I",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-valentinian-i-lineage-lineage-q3775841",
+          "from": "valentinian-i",
+          "to": "lineage-lineage-q3775841",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Valentinian_I",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "valens": {
+      "people": [
+        {
+          "id": "lineage-valentinianus-galates",
+          "name": "Valentinianus Galates",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Valentinianus Galates",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Valentinianus_Galates"
+        },
+        {
+          "id": "lineage-lineage-q4064906",
+          "name": "Anastasia",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Anastasia",
+          "wikipediaUrl": "https://www.wikidata.org/wiki/Q4064906"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-valens-lineage-valentinianus-galates",
+          "from": "valens",
+          "to": "lineage-valentinianus-galates",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Valens",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-valens-lineage-lineage-q4064906",
+          "from": "valens",
+          "to": "lineage-lineage-q4064906",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Valens",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "gratian": {
+      "people": [],
+      "relationships": []
+    },
+    "valentinian-ii": {
+      "people": [],
+      "relationships": []
+    },
+    "theodosius-i": {
+      "people": [
+        {
+          "id": "lineage-honorius",
+          "name": "Honorius",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Honorius",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Honorius"
+        },
+        {
+          "id": "lineage-arcadius",
+          "name": "Arcadius",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Arcadius",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Arcadius"
+        },
+        {
+          "id": "lineage-pulcheria-daughter-of-theodosius-i-",
+          "name": "Pulcheria",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Pulcheria (daughter of Theodosius I)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Pulcheria_(daughter_of_Theodosius_I)"
+        },
+        {
+          "id": "lineage-lineage-q11924576",
+          "name": "Gratianus",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Gratianus",
+          "wikipediaUrl": "https://www.wikidata.org/wiki/Q11924576"
+        },
+        {
+          "id": "lineage-galla-placidia",
+          "name": "Galla Placidia",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Galla Placidia",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Galla_Placidia"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-theodosius-i-lineage-honorius",
+          "from": "theodosius-i",
+          "to": "lineage-honorius",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Theodosius_I",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-theodosius-i-lineage-arcadius",
+          "from": "theodosius-i",
+          "to": "lineage-arcadius",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Theodosius_I",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-theodosius-i-lineage-pulcheria-daughter-of-theodosius-i-",
+          "from": "theodosius-i",
+          "to": "lineage-pulcheria-daughter-of-theodosius-i-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Theodosius_I",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-theodosius-i-lineage-lineage-q11924576",
+          "from": "theodosius-i",
+          "to": "lineage-lineage-q11924576",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Theodosius_I",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-theodosius-i-lineage-galla-placidia",
+          "from": "theodosius-i",
+          "to": "lineage-galla-placidia",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Theodosius_I",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-lineage-galla-placidia-valentinian-iii",
+          "from": "lineage-galla-placidia",
+          "to": "valentinian-iii",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Galla_Placidia",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "constantine-iii": {
+      "people": [
+        {
+          "id": "lineage-constans-ii-son-of-constantine-iii-",
+          "name": "Constans II",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Constans II (son of Constantine III)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Constans_II_(son_of_Constantine_III)"
+        },
+        {
+          "id": "lineage-lineage-q1711942",
+          "name": "Julian",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Julian",
+          "wikipediaUrl": "https://www.wikidata.org/wiki/Q1711942"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-constantine-iii-lineage-constans-ii-son-of-constantine-iii-",
+          "from": "constantine-iii",
+          "to": "lineage-constans-ii-son-of-constantine-iii-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Constantine_III_(Western_Roman_emperor)",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-constantine-iii-lineage-lineage-q1711942",
+          "from": "constantine-iii",
+          "to": "lineage-lineage-q1711942",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Constantine_III_(Western_Roman_emperor)",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "constantius-iii": {
+      "people": [
+        {
+          "id": "lineage-justa-grata-honoria",
+          "name": "Justa Grata Honoria",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Justa Grata Honoria",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Justa_Grata_Honoria"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-constantius-iii-valentinian-iii",
+          "from": "constantius-iii",
+          "to": "valentinian-iii",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Constantius_III",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-constantius-iii-lineage-justa-grata-honoria",
+          "from": "constantius-iii",
+          "to": "lineage-justa-grata-honoria",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Constantius_III",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "joannes": {
+      "people": [],
+      "relationships": []
+    },
+    "valentinian-iii": {
+      "people": [
+        {
+          "id": "lineage-placidia",
+          "name": "Placidia",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Placidia",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Placidia"
+        },
+        {
+          "id": "lineage-eudocia-daughter-of-valentinian-iii-",
+          "name": "Eudocia",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Eudocia (daughter of Valentinian III)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Eudocia_(daughter_of_Valentinian_III)"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-valentinian-iii-lineage-placidia",
+          "from": "valentinian-iii",
+          "to": "lineage-placidia",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Valentinian_III",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-valentinian-iii-lineage-eudocia-daughter-of-valentinian-iii-",
+          "from": "valentinian-iii",
+          "to": "lineage-eudocia-daughter-of-valentinian-iii-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Valentinian_III",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "honorius": {
+      "people": [
+        {
+          "id": "lineage-serena-wife-of-stilicho-",
+          "name": "Serena",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Serena (wife of Stilicho)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Serena_(wife_of_Stilicho)"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-honorius-lineage-serena-wife-of-stilicho-",
+          "from": "honorius",
+          "to": "lineage-serena-wife-of-stilicho-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Honorius",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "petronius-maximus": {
+      "people": [
+        {
+          "id": "lineage-palladius-caesar-",
+          "name": "Palladius",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Palladius (Caesar)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Palladius_(Caesar)"
+        },
+        {
+          "id": "lineage-lineage-q131731532",
+          "name": "Anicius",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Anicius",
+          "wikipediaUrl": "https://www.wikidata.org/wiki/Q131731532"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-petronius-maximus-lineage-palladius-caesar-",
+          "from": "petronius-maximus",
+          "to": "lineage-palladius-caesar-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Petronius_Maximus",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-petronius-maximus-lineage-lineage-q131731532",
+          "from": "petronius-maximus",
+          "to": "lineage-lineage-q131731532",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Petronius_Maximus",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "avitus": {
+      "people": [
+        {
+          "id": "lineage-papianilla-wife-of-sidonius-apollinaris-",
+          "name": "Papianilla",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Papianilla (wife of Sidonius Apollinaris)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Papianilla_(wife_of_Sidonius_Apollinaris)"
+        },
+        {
+          "id": "lineage-ecdicius",
+          "name": "Ecdicius",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Ecdicius",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Ecdicius"
+        },
+        {
+          "id": "lineage-agricola-vir-illustris-",
+          "name": "Agricola",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Agricola (vir illustris)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Agricola_(vir_illustris)"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-avitus-lineage-papianilla-wife-of-sidonius-apollinaris-",
+          "from": "avitus",
+          "to": "lineage-papianilla-wife-of-sidonius-apollinaris-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Avitus",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-avitus-lineage-ecdicius",
+          "from": "avitus",
+          "to": "lineage-ecdicius",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Avitus",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-avitus-lineage-agricola-vir-illustris-",
+          "from": "avitus",
+          "to": "lineage-agricola-vir-illustris-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Avitus",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "majorian": {
+      "people": [],
+      "relationships": []
+    },
+    "libius-severus": {
+      "people": [],
+      "relationships": []
+    },
+    "anthemius": {
+      "people": [
+        {
+          "id": "lineage-marcianus-son-of-anthemius-",
+          "name": "Marcian",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Marcianus (son of Anthemius)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Marcianus_(son_of_Anthemius)"
+        },
+        {
+          "id": "lineage-anthemiolus",
+          "name": "Anthemiolus",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Anthemiolus",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Anthemiolus"
+        },
+        {
+          "id": "lineage-alypia-daughter-of-anthemius-",
+          "name": "Alypia",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Alypia (daughter of Anthemius)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Alypia_(daughter_of_Anthemius)"
+        },
+        {
+          "id": "lineage-procopius-anthemius-son-of-anthemius-",
+          "name": "Procopius Anthemius",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Procopius Anthemius (son of Anthemius)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Procopius_Anthemius_(son_of_Anthemius)"
+        },
+        {
+          "id": "lineage-romulus-son-of-anthemius-",
+          "name": "Romulus",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Romulus (son of Anthemius)",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Romulus_(son_of_Anthemius)"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-anthemius-lineage-marcianus-son-of-anthemius-",
+          "from": "anthemius",
+          "to": "lineage-marcianus-son-of-anthemius-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Anthemius",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-anthemius-lineage-anthemiolus",
+          "from": "anthemius",
+          "to": "lineage-anthemiolus",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Anthemius",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-anthemius-lineage-alypia-daughter-of-anthemius-",
+          "from": "anthemius",
+          "to": "lineage-alypia-daughter-of-anthemius-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Anthemius",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-anthemius-lineage-procopius-anthemius-son-of-anthemius-",
+          "from": "anthemius",
+          "to": "lineage-procopius-anthemius-son-of-anthemius-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Anthemius",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        },
+        {
+          "id": "lineage-anthemius-lineage-romulus-son-of-anthemius-",
+          "from": "anthemius",
+          "to": "lineage-romulus-son-of-anthemius-",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Anthemius",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "olybrius": {
+      "people": [
+        {
+          "id": "lineage-anicia-juliana",
+          "name": "Anicia Juliana",
+          "isEmperor": false,
+          "reignStart": "Unknown",
+          "reignEnd": "Unknown",
+          "shortBio": "Family connection sourced from Wikidata lineage claims.",
+          "wikipediaTitle": "Anicia Juliana",
+          "wikipediaUrl": "https://en.wikipedia.org/wiki/Anicia_Juliana"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lineage-olybrius-lineage-anicia-juliana",
+          "from": "olybrius",
+          "to": "lineage-anicia-juliana",
+          "type": "child",
+          "label": "child",
+          "isAdopted": false,
+          "evidence": [
+            {
+              "sourceName": "Wikidata",
+              "sourceUrl": "https://en.wikipedia.org/wiki/Olybrius",
+              "retrievedAt": "2026-04-13"
+            }
+          ]
+        }
+      ]
+    },
+    "glycerius": {
+      "people": [],
+      "relationships": []
+    },
+    "julius-nepos": {
+      "people": [],
+      "relationships": []
+    },
+    "romulus-augustulus": {
+      "people": [],
+      "relationships": []
     }
   },
   "personMetadataById": {
@@ -4710,6 +5659,285 @@
       "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Solidus_Licinius_Jr_AF21_CdM_Paris.jpg/330px-Solidus_Licinius_Jr_AF21_CdM_Paris.jpg",
       "birthDate": "315-01-01 CE",
       "deathDate": "326-01-01 CE"
+    },
+    "constantine-ii": {
+      "shortBio": "Constantine II was Roman emperor from 337 to 340. He was the second son of Emperor Constantine I and the eldest son of his second wife, Flavia Maxima Fausta. He was proclaimed caesar by his father shortly after his birth. He was associated with military victories over the Sarmatians, Alamanni and Goths during his career, for which he was granted a number of victory titles. He held the consulship four times – in 320, 321, 324, and 329.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Campidoglio%2C_Roma_-_Costantino_II_cesare_fronte.jpg/330px-Campidoglio%2C_Roma_-_Costantino_II_cesare_fronte.jpg",
+      "birthDate": "316 CE",
+      "deathDate": "340-04-01 CE"
+    },
+    "constans": {
+      "shortBio": "Flavius Julius Constans, also called Constans I, was Roman emperor from 337 to 350. He held the imperial rank of caesar from 333, and was the youngest son of Constantine the Great.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Mus%C3%A9e_du_Louvre_-_L%27empereur_Constant_%28Ma_1021%29.jpg/330px-Mus%C3%A9e_du_Louvre_-_L%27empereur_Constant_%28Ma_1021%29.jpg",
+      "birthDate": "320-01-01 CE",
+      "deathDate": "350-01-18 CE"
+    },
+    "constantius-ii": {
+      "shortBio": "Constantius II was Roman emperor from 337 to 361. His reign saw constant warfare on the borders against the Sasanian Empire and Germanic peoples, while internally the Roman Empire went through repeated civil wars, court intrigues, and usurpations. His religious policies inflamed domestic conflicts that would continue after his death.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Bust_of_Constantius_II_%28Mary_Harrsch%29.jpg/330px-Bust_of_Constantius_II_%28Mary_Harrsch%29.jpg",
+      "birthDate": "317-08-07 CE",
+      "deathDate": "361-11-03 CE"
+    },
+    "julian": {
+      "shortBio": "Julian was the Caesar of the West from 355 to 360 and Roman emperor from 361 to 363, as well as a notable philosopher and author in Greek. His rejection of Christianity, and his promotion of Neoplatonic Hellenism caused him to be remembered as Julian the Apostate in the Christian tradition.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Juliancng8851obverse.jpg/330px-Juliancng8851obverse.jpg",
+      "birthDate": "331-11-17 CE",
+      "deathDate": "363-06-26 CE"
+    },
+    "jovian": {
+      "shortBio": "Jovian was Roman emperor from June 363 to February 364. As part of the imperial bodyguard, he accompanied Julian on his Persian expedition. Julian was killed in battle, and the exhausted and ill-provisioned Roman army declared Jovian his successor. Unable to cross the Tigris, Jovian made peace with the Sasanian Empire on humiliating terms. He spent the rest of his seven-month reign traveling back towards Constantinople, but died at Dadastana without reaching the capital city.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Solidus_of_Jovian2_%28obverse%29.jpg/330px-Solidus_of_Jovian2_%28obverse%29.jpg",
+      "birthDate": "331-01-01 CE",
+      "deathDate": "364-02-17 CE"
+    },
+    "lineage-constantia-wife-of-gratian-": {
+      "shortBio": "Constantia (362–383) was the first empress consort of Gratian of the Western Roman Empire. According to Ammianus Marcellinus, her mother was Faustina and her father was Constantius II, who died before Constantia was born.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/06/Flavia_Maxima_Constantia%2C_wife_of_Gratian.png",
+      "birthDate": "361 CE",
+      "deathDate": "383-01-01 CE"
+    },
+    "lineage-lineage-q114712319": {
+      "shortBio": "The gens Flavia was a plebeian family at ancient Rome. Its members are first mentioned during the last three centuries of the Republic. The first of the Flavii to achieve prominence was Marcus Flavius, tribune of the plebs in 327 and 323 BC; however, no Flavius attained the consulship until Gaius Flavius Fimbria in 104 BC. The gens became illustrious during the first century AD, when the family of the Flavii Sabini claimed the imperial dignity.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Ritratto_di_vespasiano%2C_da_ostia%2C_50-100_dc_ca._%28pal_massimo%29.JPG/330px-Ritratto_di_vespasiano%2C_da_ostia%2C_50-100_dc_ca._%28pal_massimo%29.JPG"
+    },
+    "lineage-varronianus-son-of-jovian-": {
+      "shortBio": "Varronianus was the son of the emperor Jovian.",
+      "birthDate": "363-01-01 CE",
+      "deathDate": "301-01-01 CE"
+    },
+    "valentinian-i": {
+      "shortBio": "Valentinian I, sometimes known as Valentinian the Great, was Roman emperor from 364 to 375. He is the second-last emperor to govern the empire as a whole, albeit he only did so from February 26th to March 28th of 364, after which he appointed Valens to rule over the Eastern half the empire, while he remained in control of the West. During his reign, he fought successfully against the Alamanni, Quadi, and Sarmatians, strengthening the border fortifications and conducting campaigns across the Rhine and Danube. Also, his general Theodosius the Elder defeated a revolt in Africa and the Great Conspiracy. Valentinian founded the Valentinian dynasty, with his sons Gratian and Valentinian II succeeding him in the western half of the empire and his daughter Galla marrying emperor Theodosius I.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Gold_Solidus_of_Valens%2C_Antioch.jpg/330px-Gold_Solidus_of_Valens%2C_Antioch.jpg",
+      "birthDate": "321-07-03 CE",
+      "deathDate": "375-11-17 CE"
+    },
+    "valens": {
+      "shortBio": "Valens was Roman emperor from 364 to 378. Following a largely unremarkable military career, he was named co-emperor by his elder brother Valentinian I, who gave him the eastern half of the Roman Empire to rule. In 378, Valens was defeated and killed at the Battle of Adrianople against the invading Goths, which astonished contemporaries and marked the beginning of barbarian encroachment into Roman territory.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/INC-3015-a_%D0%A1%D0%BE%D0%BB%D0%B8%D0%B4._%D0%92%D0%B0%D0%BB%D0%B5%D0%BD%D1%82_II._%D0%9E%D0%BA._364_%D0%B3._%28%D0%B0%D0%B2%D0%B5%D1%80%D1%81%29.png/330px-INC-3015-a_%D0%A1%D0%BE%D0%BB%D0%B8%D0%B4._%D0%92%D0%B0%D0%BB%D0%B5%D0%BD%D1%82_II._%D0%9E%D0%BA._364_%D0%B3._%28%D0%B0%D0%B2%D0%B5%D1%80%D1%81%29.png",
+      "birthDate": "328-01-01 CE",
+      "deathDate": "378-08-09 CE"
+    },
+    "gratian": {
+      "shortBio": "Gratian was emperor of the Western Roman Empire from 367 to 383. The eldest son of Valentinian I, Gratian was raised to the rank of Augustus as a child and inherited the West after his father's death in 375. He nominally shared the government with his infant half-brother Valentinian II, who was also acclaimed emperor in Pannonia on Valentinian's death. The East was ruled by his uncle Valens, who was later succeeded by Theodosius I.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Gratian_Trier_enhanced.jpg/330px-Gratian_Trier_enhanced.jpg",
+      "birthDate": "359-04-18 CE",
+      "deathDate": "383-08-25 CE"
+    },
+    "valentinian-ii": {
+      "shortBio": "Valentinian II was a Roman emperor in the western part of the Roman Empire between AD 375 and 392. He was at first junior co-ruler of his half-brother, then was sidelined by a usurper, and finally became sole ruler after 388, albeit with limited de facto powers. He was the youngest emperor (co-ruler) in the Western Roman Empire.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Statue_of_emperor_Valentinian_II.JPG/330px-Statue_of_emperor_Valentinian_II.JPG",
+      "birthDate": "371-01-01 CE",
+      "deathDate": "392-05-15 CE"
+    },
+    "theodosius-i": {
+      "shortBio": "Theodosius I, also known as Theodosius the Great, was Roman emperor from 379 to 395. He won two civil wars and was instrumental in establishing the Nicene Creed as the orthodox doctrine for Nicene Christianity. Theodosius was the last emperor to rule the entire Roman Empire before its administration was permanently split between the Western Roman Empire and the Eastern Roman Empire. He ended the Gothic War (376–382), but did so on terms disadvantageous to the empire, with the Goths remaining politically autonomous within Roman territory, albeit as nominal allies.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Bust_of_Theodosius_I.jpg/330px-Bust_of_Theodosius_I.jpg",
+      "birthDate": "347-01-11 CE",
+      "deathDate": "395-01-17 CE"
+    },
+    "lineage-galla-wife-of-theodosius-i-": {
+      "shortBio": "Galla was a Roman empress as the second wife of Theodosius I. She was the daughter of Valentinian I and his second wife Justina.",
+      "deathDate": "394 CE"
+    },
+    "lineage-galla-placidia": {
+      "shortBio": "Galla Placidia, daughter of the Roman emperor Theodosius I, was a mother, tutor, and advisor to emperor Valentinian III. She was queen consort to Ataulf, King of the Visigoths from 414 until his death in 415, briefly empress consort to Constantius III in 421, and managed the government administration as a regent during the early reign of Valentinian III until her death.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Galla_Placidia_coin.png/330px-Galla_Placidia_coin.png",
+      "birthDate": "386 CE",
+      "deathDate": "450-11-27 CE"
+    },
+    "lineage-valentinianus-galates": {
+      "shortBio": "Valentinianus Galates was the only son of the Roman emperor Valens, who ruled the Roman Empire from 364 to 378. Born into the ruling Valentinianic dynasty, Galates became Roman consul in 369, but he died in early childhood, and the empire passed to the descendants of Valentinian I, Galates's uncle, whom he was named after.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/BnF_MS_Gr510_folio_104_recto_-_detail_-_Death_of_Valentinianus_Galates_%28cropped%29.jpg/330px-BnF_MS_Gr510_folio_104_recto_-_detail_-_Death_of_Valentinianus_Galates_%28cropped%29.jpg",
+      "birthDate": "366-01-18 CE",
+      "deathDate": "369-01-01 CE"
+    },
+    "lineage-lineage-q4064906": {
+      "shortBio": "Anastasia is a feminine given name of Greek and Slavic origin, derived from the Greek word anástasis (ἀνάστασις), meaning \"resurrection\". It is a popular name in Eastern Europe."
+    },
+    "lineage-honorius": {
+      "shortBio": "Honorius was Roman emperor from 393 to 423. He was the younger son of emperor Theodosius I and his first wife Aelia Flaccilla. After the death of Theodosius in 395, Honorius, under the regency of Stilicho, ruled the western half of the empire while his brother Arcadius ruled the eastern half. His reign over the Western Roman Empire was precarious and chaotic. In 410, Rome was sacked for the first time since the Battle of the Allia almost 800 years prior.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Diptych_of_Honorius_%28head%29_%282%29.jpg/330px-Diptych_of_Honorius_%28head%29_%282%29.jpg",
+      "birthDate": "384-09-09 CE",
+      "deathDate": "423-08-15 CE"
+    },
+    "lineage-arcadius": {
+      "shortBio": "Arcadius was Roman emperor from 383 to his death in 408. He was the eldest son of the Augustus Theodosius I and his first wife Aelia Flaccilla, and the brother of Honorius. Arcadius ruled the eastern half of the empire from 395, when their father died, while Honorius ruled the west. In his time, he was seen as a weak ruler dominated by a series of powerful ministers and by his wife, Aelia Eudoxia.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Arcadius_Istanbul_Museum.JPG/330px-Arcadius_Istanbul_Museum.JPG",
+      "birthDate": "377-01-01 CE",
+      "deathDate": "408-05-01 CE"
+    },
+    "lineage-pulcheria-daughter-of-theodosius-i-": {
+      "shortBio": "Pulcheria (c.378-c.385) was the daughter of the emperor Theodosius I and his first wife Aelia Flaccilla.",
+      "birthDate": "379 CE",
+      "deathDate": "386-01-01 CE"
+    },
+    "lineage-lineage-q11924576": {
+      "shortBio": "Gratian was emperor of the Western Roman Empire from 367 to 383. The eldest son of Valentinian I, Gratian was raised to the rank of Augustus as a child and inherited the West after his father's death in 375. He nominally shared the government with his infant half-brother Valentinian II, who was also acclaimed emperor in Pannonia on Valentinian's death. The East was ruled by his uncle Valens, who was later succeeded by Theodosius I.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Gratian_Trier_enhanced.jpg/330px-Gratian_Trier_enhanced.jpg"
+    },
+    "honorius": {
+      "shortBio": "Honorius was Roman emperor from 393 to 423. He was the younger son of emperor Theodosius I and his first wife Aelia Flaccilla. After the death of Theodosius in 395, Honorius, under the regency of Stilicho, ruled the western half of the empire while his brother Arcadius ruled the eastern half. His reign over the Western Roman Empire was precarious and chaotic. In 410, Rome was sacked for the first time since the Battle of the Allia almost 800 years prior.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Diptych_of_Honorius_%28head%29_%282%29.jpg/330px-Diptych_of_Honorius_%28head%29_%282%29.jpg",
+      "birthDate": "384-09-09 CE",
+      "deathDate": "423-08-15 CE"
+    },
+    "constantine-iii": {
+      "shortBio": "Constantine III was a common Roman soldier who was declared emperor in Roman Britain in 407 and established himself in Gaul. He was recognised as co-emperor of the Roman Empire from 409 until 411.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Solidus_of_Constantine_III_%28west%29.png/330px-Solidus_of_Constantine_III_%28west%29.png",
+      "birthDate": "400-01-01 CE",
+      "deathDate": "411-08-01 CE"
+    },
+    "constantius-iii": {
+      "shortBio": "Constantius III was briefly Western Roman emperor in 421, having earned the throne through his capability as a general under Honorius. By 411 he had achieved the rank of magister militum, and in the same year he suppressed the revolt of the usurper Constantine III. Constantius went on to lead campaigns against various barbarian groups in Hispania and Gaul, recovering much of both for the Western Roman Empire. He married Honorius's sister Galla Placidia in 417, a sign of his ascendant status, and was proclaimed co-emperor by Honorius on 8 February 421. Constantius reigned for seven months before dying on 2 September 421.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Constantius_III_diptych.jpg/330px-Constantius_III_diptych.jpg",
+      "birthDate": "370 CE",
+      "deathDate": "421-09-02 CE"
+    },
+    "joannes": {
+      "shortBio": "Joannes or Johannes was Western Roman emperor from 423 to 425.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Solidus_of_Joannes.png/330px-Solidus_of_Joannes.png",
+      "birthDate": "400-01-01 CE",
+      "deathDate": "425 CE"
+    },
+    "valentinian-iii": {
+      "shortBio": "Valentinian III was Roman emperor in the West from 425 to 455. Starting in childhood, his reign over the Roman Empire was one of the longest, but was dominated by civil wars among powerful generals and the barbarian invasions. He was the youngest sole emperor in the Western Roman Empire.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Bust_of_Valentinian_III%2C_Louvre_%28cropped%29.jpg/330px-Bust_of_Valentinian_III%2C_Louvre_%28cropped%29.jpg",
+      "birthDate": "419-07-02 CE",
+      "deathDate": "455-03-16 CE"
+    },
+    "lineage-constans-ii-son-of-constantine-iii-": {
+      "shortBio": "Constans II was the son of the Western Roman emperor Constantine III and served as his co-emperor from 409 to 411. When his father rebelled against the ruling emperor Honorius and the army in Britain acclaimed him as emperor in early 407, Constans was a monk. He was summoned to Gaul, appointed to the position of caesar (heir) and swiftly married so that a dynasty could be founded. In Hispania, Honorius's relatives took up arms in 408 and expelled Constantine's administration. An army under Constans and the general Gerontius was sent to deal with this and re-established Constantine's authority.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Siliqua_Constans_II_Arelate_%28obverse%29.jpg/330px-Siliqua_Constans_II_Arelate_%28obverse%29.jpg",
+      "birthDate": "400-01-01 CE",
+      "deathDate": "411-01-01 CE"
+    },
+    "lineage-lineage-q1711942": {
+      "shortBio": "Julian may refer to:"
+    },
+    "lineage-justa-grata-honoria": {
+      "shortBio": "Justa Grata Honoria was the daughter of Constantius III and Galla Placidia, as well as the sister of Valentinian III. At a young age, she was granted the title of Augusta. She was said to have asked Attila the Hun to invade on her behalf, which is often interpreted as a proposal.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Solidus-Honoria-RIC_2022.jpg/330px-Solidus-Honoria-RIC_2022.jpg",
+      "birthDate": "417-01-01 CE"
+    },
+    "lineage-placidia": {
+      "shortBio": "Placidia was a 5th-century Roman noblewoman and briefly empress in the Western Roman Empire. Her father was Valentinian III, Roman emperor in the West from 425 to 455. In 455, shortly after her marriage to Olybrius, she was captured by Gaiseric and spent six or seven years as a hostage of the Vandal Kingdom. At the end of this period Placidia was ransomed back to Constantinople, where she remained during Olybrius's few months as western Roman emperor in 472. She was one of the last imperial spouses in the Roman west, during the Fall of the Western Roman Empire in Late Antiquity.",
+      "deathDate": "484 CE"
+    },
+    "lineage-eudocia-daughter-of-valentinian-iii-": {
+      "shortBio": "Eudocia or Eudoxia was the eldest daughter of Roman emperor Valentinian III and his wife, Licinia Eudoxia. She was thus the granddaughter on her mother's side of Eastern emperor Theodosius II and his wife, the poet Aelia Eudocia; and on her father's side of Western emperor Constantius III and his wife Galla Placidia.",
+      "birthDate": "439-01-01 CE",
+      "deathDate": "471-01-01 CE"
+    },
+    "lineage-serena-wife-of-stilicho-": {
+      "shortBio": "Serena was a member of the Theodosian dynasty as the niece of the emperor Theodosius I, as well as the wife of the military commander Stilicho.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Stilico_diptych.jpg/330px-Stilico_diptych.jpg",
+      "birthDate": "365-01-01 CE",
+      "deathDate": "408-01-01 CE"
+    },
+    "petronius-maximus": {
+      "shortBio": "Petronius Maximus was Roman emperor of the West for two and a half months in 455. A wealthy senator and a prominent aristocrat, he was instrumental in the murders of the Western Roman magister militum, Aëtius, and the Western Roman emperor, Valentinian III.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Solidus_of_Petronius_Maximus.png/330px-Solidus_of_Petronius_Maximus.png",
+      "birthDate": "396 CE",
+      "deathDate": "455-04-22 CE"
+    },
+    "avitus": {
+      "shortBio": "Eparchius Avitus was Roman emperor of the Western Empire from July 455 to October 456. He was a senator of Gallic extraction and a high-ranking officer both in the civil and military administration, as well as Bishop of Piacenza.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Solidus_Avitus_Arles_%28obverse%29.jpg/330px-Solidus_Avitus_Arles_%28obverse%29.jpg",
+      "birthDate": "395-01-01 CE",
+      "deathDate": "457-08-18 CE"
+    },
+    "majorian": {
+      "shortBio": "Majorian was Western Roman emperor from 457 to 461. A prominent commander in the Western military, Majorian deposed Avitus in 457 with the aid of his ally Ricimer at the Battle of Placentia. Possessing little more than Italy and Dalmatia, as well as some territory in Hispania and northern Gaul, Majorian campaigned vigorously for three years against the Empire's enemies. In 461, he was murdered at Dertona in a conspiracy, and his successors until the fall of the Empire in 476 were puppets either of barbarian generals or the Eastern Roman court.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Solidus_Majorian_Arles_%28obverse%29.jpg/330px-Solidus_Majorian_Arles_%28obverse%29.jpg",
+      "birthDate": "420 CE",
+      "deathDate": "461-08-07 CE"
+    },
+    "libius-severus": {
+      "shortBio": "Libius Severus, sometimes enumerated as Severus III, was Western Roman emperor from November 19, 461, to his death on November 14, 465. A native of Lucania, Severus was the fourth of the so-called \"Shadow Emperors\" who followed the deposition of the Valentinianic dynasty in 455. He ruled for just under four years, attaining the throne after his predecessor, Majorian, was overthrown by his magister militum, Ricimer. Severus was the first of a series of emperors who were highly dependent on the general, and it is often presumed that Ricimer held most of the de facto power during Severus's reign.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Libiusseverus01854obverse.jpg/330px-Libiusseverus01854obverse.jpg",
+      "birthDate": "420-01-01 CE",
+      "deathDate": "465-08-15 CE"
+    },
+    "anthemius": {
+      "shortBio": "Procopius Anthemius was the Western Roman emperor from 467 to 472. Born in the Eastern Roman Empire, Anthemius quickly worked his way up the ranks. He married into the Theodosian dynasty through Marcia Euphemia, daughter of Eastern emperor Marcian. He soon received a significant number of promotions to various posts, and was presumed to be Marcian's planned successor. However, Marcian's sudden death in 457, together with that of Western emperor Avitus, left the imperial succession in the hands of Aspar. He instead appointed Leo, a low-ranking officer, to the Eastern throne, probably out of fear that Anthemius would be too independent. Eventually, this same Leo designated Anthemius as Western emperor in 467, following a two-year interregnum that started in November 465.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Solidus_of_Anthemius.png/330px-Solidus_of_Anthemius.png",
+      "birthDate": "420-01-01 CE",
+      "deathDate": "472-07-11 CE"
+    },
+    "lineage-palladius-caesar-": {
+      "shortBio": "Palladius was caesar of the Western Roman Empire for two months in 455. He was born between 415 and 425 AD and may have held the position of Praetorian Prefect during the 450's. After his father, Petronius Maximus, assassinated Emperor Valentinian III and seized power, Palladius became heir-apparent with the title of caesar. His marriage to Valentinian’s daughter Eudocia broke a pre-existing treaty in which Eudocia had been promised as a wife for Huneric, son of the Vandal king Genseric. The Vandals invaded and sacked Rome; while attempting to escape the city, Petronius Maximus and Palladius were killed by a mob of angry Romans on 31 May 455.",
+      "birthDate": "500-01-01 CE",
+      "deathDate": "455 CE"
+    },
+    "lineage-lineage-q131731532": {
+      "shortBio": "Anicius is a monotypic genus of Mexican jumping spiders containing the single species, Anicius dolius. It was first described by Ralph Vary Chamberlin in 1925, and is only found in Mexico."
+    },
+    "lineage-papianilla-wife-of-sidonius-apollinaris-": {
+      "shortBio": "Papianilla was an aristocrat of Roman Gaul. She was the daughter of future Western Roman Emperor Eparchius Avitus, and wife of bishop, author, and letter-writer Sidonius Apollinaris.",
+      "birthDate": "401 CE",
+      "deathDate": "499 CE"
+    },
+    "lineage-ecdicius": {
+      "shortBio": "Ecdicius Avitus was an Arverni aristocrat, senator, and magister militum praesentalis from 474 until 475.",
+      "birthDate": "420-01-01 CE",
+      "deathDate": "470-01-01 CE"
+    },
+    "lineage-agricola-vir-illustris-": {
+      "shortBio": "Agricola was an Arvernian noble and son of the Western Roman Emperor Avitus."
+    },
+    "lineage-marcianus-son-of-anthemius-": {
+      "shortBio": "Flavius Marcianus was a member of the Leonid dynasty. The son of the Western emperor Anthemius, Marcianus married Leontia, the daughter of the Eastern Roman emperor Leo I. He was consul twice, and in 479 unsuccessfully attempted to overthrow the emperor Zeno. After his capture he was forced to become a monk; he escaped and raised an army but was defeated and recaptured by Flavius Appalius Illus Trocundes. In 484, when the Isaurian general Illus revolted against Zeno, Marcianus was freed and Illus proclaimed him emperor, before deposing him in favour of Leontius.",
+      "birthDate": "500-01-01 CE",
+      "deathDate": "484 CE"
+    },
+    "lineage-anthemiolus": {
+      "shortBio": "Anthemiolus was the son of the Western Roman Emperor Anthemius (467–472) and Marcia Euphemia, daughter of the Eastern Roman emperor Marcian.",
+      "birthDate": "500-01-01 CE",
+      "deathDate": "471-01-01 CE"
+    },
+    "lineage-alypia-daughter-of-anthemius-": {
+      "shortBio": "Alypia was a noblewoman of the Western Roman Empire, daughter of the Western Roman Emperor Anthemius.",
+      "birthDate": "401 CE",
+      "deathDate": "472 CE"
+    },
+    "lineage-procopius-anthemius-son-of-anthemius-": {
+      "shortBio": "Procopius Anthemius was a politician of the Eastern Roman Empire, son of Western Roman Emperor Anthemius. After the death of the Eastern Roman Emperor Leo I, Procopius sided with his brother Marcianus's attempt to overthrow Zeno. When Marcianus's rebellion failed, Procopius fled to Thrace and then to Rome, returning to Constantinople after the death of Zeno and accession of Anastasius I. After his return to Constantinople, he was consul in 515.",
+      "birthDate": "450 CE",
+      "deathDate": "501-01-01 CE"
+    },
+    "lineage-romulus-son-of-anthemius-": {
+      "shortBio": "Romulus was a son of Western Roman Emperor Anthemius.",
+      "birthDate": "469-01-01 CE",
+      "deathDate": "401-01-01 CE"
+    },
+    "olybrius": {
+      "shortBio": "Anicius Olybrius was Roman emperor from July 472 until his death later that same year; his rule as augustus in the western Roman Empire was not recognised as legitimate by the ruling augustus in the eastern Roman Empire, Leo I. He was in reality a puppet ruler raised to power by Ricimer, the magister militum of Germanic descent, and was mainly interested in religion, while the actual power was held by Ricimer and his nephew Gundobad.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Tremissis_Olybrius_%28obverse%29.jpg/330px-Tremissis_Olybrius_%28obverse%29.jpg",
+      "birthDate": "500 CE",
+      "deathDate": "472-10-23 CE"
+    },
+    "glycerius": {
+      "shortBio": "Glycerius was Roman emperor of the West from 473 to 474. He served as comes domesticorum during the reign of Olybrius, until Olybrius died in November 472. After a four-month interregnum, Glycerius was proclaimed as emperor in March 473 by Gundobad, the magister militum and power behind the throne. Very few of the events of his reign are known other than that an attempted invasion of Italy by the Visigoths was repelled by local commanders, diverting them to Gaul. Glycerius also prevented an invasion by the Ostrogoths through diplomacy, including a gift of 2,000 solidi.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Gold_Solidus_of_Glycerius.jpg/330px-Gold_Solidus_of_Glycerius.jpg",
+      "birthDate": "430-01-01 CE",
+      "deathDate": "480 CE"
+    },
+    "julius-nepos": {
+      "shortBio": "Julius Nepos, or simply Nepos, ruled as Roman emperor of the West from 24 June 474 to 28 August 475. After losing power in Italy, Nepos retreated to his home province of Dalmatia, from which he continued to claim the western imperial title, with recognition from the Eastern Roman Empire, until he was murdered in 480. Though Nepos's successor in Italy, Romulus Augustulus, is traditionally deemed the last western Roman emperor, Nepos is regarded by some historians as the true last emperor of the west, being the last widely recognised holder of the position.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Solidus_of_Julius_Nepos.png/330px-Solidus_of_Julius_Nepos.png",
+      "birthDate": "430-01-01 CE",
+      "deathDate": "480-05-09 CE"
+    },
+    "romulus-augustulus": {
+      "shortBio": "Romulus Augustus, nicknamed Augustulus, was Roman emperor of the West from 31 October 475 until 4 September 476. Romulus was placed on the imperial throne while still a minor by his father Orestes, the magister militum, for whom he served as little more than a figurehead. After a rule of ten months, the barbarian general Odoacer defeated and killed Orestes and deposed Romulus. As Odoacer did not proclaim any successor, Romulus is typically regarded as the last Western Roman emperor, his deposition marking the end of the Western Roman Empire as a political entity. The deposition of Romulus Augustulus is also sometimes used by historians to mark the transition from antiquity to the medieval period.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Gold_Solidus_of_Romulus_Augustulus.jpg/330px-Gold_Solidus_of_Romulus_Augustulus.jpg",
+      "birthDate": "462 CE"
+    },
+    "lineage-anicia-juliana": {
+      "shortBio": "Anicia Juliana was a Late Antique Roman imperial princess, wife of the magister militum of the eastern Roman empire, Areobindus Dagalaiphus Areobindus, patron of the great Church of St Polyeuctus in Constantinople, and owner of the Vienna Dioscurides. She was the daughter of the Roman emperor Olybrius and his wife Placidia, herself the daughter of the emperor Valentinian III and Licinia Eudoxia, through whom Anicia Juliana was also great-granddaughter of the emperor Theodosius II and the empress Aelia Eudocia. During the rule of the Leonid dynasty and the rise of the later Justinian dynasty, Anicia Juliana was thus the most prominent member of both the preceding imperial dynasties, the Valentinianic dynasty established by Valentinian the Great and the related Theodosian dynasty established by Theodosius the Great.",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Wiener_Dioskurides_6v_%28portrait_detail%29.jpg/330px-Wiener_Dioskurides_6v_%28portrait_detail%29.jpg",
+      "birthDate": "462 CE",
+      "deathDate": "527 CE"
     }
   },
   "failures": []

@@ -91,7 +91,7 @@ const emperorSeeds: EmperorSeed[] = [
   { id: 'gratian', name: 'Gratian', wikipediaTitle: 'Gratian', reignStart: '367 CE', reignEnd: '383 CE', predecessors: ['valentinian-i'] },
   { id: 'valentinian-ii', name: 'Valentinian II', wikipediaTitle: 'Valentinian II', reignStart: '375 CE', reignEnd: '392 CE', predecessors: ['gratian'] },
   { id: 'theodosius-i', name: 'Theodosius I', wikipediaTitle: 'Theodosius I', reignStart: '379 CE', reignEnd: '395 CE', predecessors: ['gratian'] },
-  { id: 'honorius', name: 'Honorius', wikipediaTitle: 'Honorius (emperor)', reignStart: '393 CE', reignEnd: '423 CE', predecessors: ['theodosius-i'] },
+  { id: 'honorius', name: 'Honorius', wikipediaTitle: 'Honorius', reignStart: '393 CE', reignEnd: '423 CE', predecessors: ['theodosius-i'] },
   { id: 'constantine-iii', name: 'Constantine III', wikipediaTitle: 'Constantine III (Western Roman emperor)', reignStart: '407 CE', reignEnd: '411 CE', predecessors: ['honorius'] },
   { id: 'constantius-iii', name: 'Constantius III', wikipediaTitle: 'Constantius III', reignStart: '421 CE', reignEnd: '421 CE', predecessors: ['honorius'] },
   { id: 'joannes', name: 'Joannes', wikipediaTitle: 'Joannes', reignStart: '423 CE', reignEnd: '425 CE', predecessors: ['honorius'] },
