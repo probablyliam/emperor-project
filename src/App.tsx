@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
-import { EmperorDetail } from './components/EmperorDetail'
-import { EmperorGraph } from './components/EmperorGraph'
+import { EmperorDetail, type RelatedGroup, type RelatedPerson } from './components/EmperorDetail'
+import { EmperorGraph, type ViewportRequest } from './components/EmperorGraph'
 import precomputedDescendants from './data/generatedDescendants.json'
 import { seedWesternEmperors } from './data/seedWesternEmperors'
+import { formatReignSpan } from './lib/format'
 import { toGraphElements } from './lib/graphElements'
 import type {
   EdgeRelationshipSummary,
@@ -13,6 +14,70 @@ import type {
   PrecomputedPersonMetadata,
   RelationshipEdge,
 } from './types/domain'
+
+const descendantsDataset = precomputedDescendants as PrecomputedDescendantsData
+const personMetadataById: Record<string, PrecomputedPersonMetadata> =
+  descendantsDataset.personMetadataById ?? {}
+
+function applyMetadata(person: PersonRecord): PersonRecord {
+  const metadata = personMetadataById[person.id]
+  if (!metadata) {
+    return person
+  }
+
+  return {
+    ...person,
+    shortBio: metadata.shortBio ?? person.shortBio,
+    imageUrl: metadata.imageUrl ?? person.imageUrl,
+    birthDate: metadata.birthDate ?? person.birthDate,
+    deathDate: metadata.deathDate ?? person.deathDate,
+  }
+}
+
+/**
+ * Merges the seed emperors with every precomputed family entry. The same relative or link can
+ * appear under several emperors, so people are deduplicated by id and a link that any entry marks
+ * as an adoption keeps that flag.
+ */
+function buildFullDataset(): EmperorDataset {
+  const people: PersonRecord[] = seedWesternEmperors.people.map(applyMetadata)
+  const seenPeople = new Set(people.map((person) => person.id))
+  const relationships: RelationshipEdge[] = [...seedWesternEmperors.relationships]
+  const edgeIndexById = new Map(relationships.map((edge, index) => [edge.id, index]))
+
+  for (const entry of Object.values(descendantsDataset.emperors)) {
+    for (const person of entry.people) {
+      if (!seenPeople.has(person.id)) {
+        seenPeople.add(person.id)
+        people.push(applyMetadata(person))
+      }
+    }
+
+    for (const edge of entry.relationships) {
+      const existingIndex = edgeIndexById.get(edge.id)
+      if (existingIndex === undefined) {
+        edgeIndexById.set(edge.id, relationships.length)
+        relationships.push(edge)
+        continue
+      }
+
+      const existing = relationships[existingIndex]
+      if (edge.type === 'child' && edge.isAdopted && !existing.isAdopted) {
+        relationships[existingIndex] = { ...existing, isAdopted: true }
+      }
+    }
+  }
+
+  return { ...seedWesternEmperors, people, relationships }
+}
+
+const fullDataset = buildFullDataset()
+
+const emperorsOnlyDataset: EmperorDataset = {
+  ...fullDataset,
+  people: fullDataset.people.filter((person) => person.isEmperor),
+  relationships: fullDataset.relationships.filter((edge) => edge.type === 'succession'),
+}
 
 function formatLinkLabel(label: string) {
   const normalized = label.trim().toLowerCase()
@@ -25,7 +90,7 @@ function formatLinkLabel(label: string) {
   }
 
   if (normalized === 'child (adopted)') {
-    return 'Child (Adopted)'
+    return 'Child (adopted)'
   }
 
   return label
@@ -67,142 +132,33 @@ function relationPriority(label: string) {
   return 3
 }
 
-type ToastKind = 'success' | 'error' | 'warning'
-
-interface ToastState {
-  id: number
-  kind: ToastKind
-  message: string
-}
-
-const TOAST_VISIBLE_MS = 11400
-const TOAST_CLOSE_MS = 280
+const MAX_SEARCH_RESULTS = 8
 
 function App() {
-  const descendantsDataset = precomputedDescendants as PrecomputedDescendantsData
-  const personMetadataById = (descendantsDataset.personMetadataById ?? {}) as Record<string, PrecomputedPersonMetadata>
   const [selectedPersonId, setSelectedPersonId] = useState('augustus')
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | undefined>()
-  const [dynamicPeople, setDynamicPeople] = useState<PersonRecord[]>([])
-  const [dynamicRelationships, setDynamicRelationships] = useState<RelationshipEdge[]>([])
-  const [loadingDescendantsForId, setLoadingDescendantsForId] = useState<string | undefined>()
-  const [toast, setToast] = useState<ToastState | undefined>()
-  const [loadedPersonIds, setLoadedPersonIds] = useState<Set<string>>(() => new Set())
-  const [isLoadingAll, setIsLoadingAll] = useState(false)
-  const [loadAllProgress, setLoadAllProgress] = useState<{ done: number; total: number } | undefined>()
+  const [showRelatives, setShowRelatives] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [viewportRequest, setViewportRequest] = useState<ViewportRequest | undefined>()
+  const viewportTokenRef = useRef(0)
 
-  const dynamicRelationshipsRef = useRef<RelationshipEdge[]>([])
-  const loadedPersonIdsRef = useRef<Set<string>>(loadedPersonIds)
-  const loadAllCancelledRef = useRef(false)
-  const toastIdRef = useRef(0)
-  const toastTimerRef = useRef<number | undefined>(undefined)
-  const toastCloseTimerRef = useRef<number | undefined>(undefined)
-  const [isToastClosing, setIsToastClosing] = useState(false)
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return
+      }
 
-  if (dynamicRelationshipsRef.current !== dynamicRelationships) {
-    dynamicRelationshipsRef.current = dynamicRelationships
-  }
-
-  if (loadedPersonIdsRef.current !== loadedPersonIds) {
-    loadedPersonIdsRef.current = loadedPersonIds
-  }
-
-  const showToast = (message: string, kind: ToastKind) => {
-    toastIdRef.current += 1
-
-    if (toastTimerRef.current !== undefined) {
-      window.clearTimeout(toastTimerRef.current)
+      setSelectedEdgeId(undefined)
+      setSearchQuery('')
     }
 
-    if (toastCloseTimerRef.current !== undefined) {
-      window.clearTimeout(toastCloseTimerRef.current)
-      toastCloseTimerRef.current = undefined
-    }
-
-    setIsToastClosing(false)
-
-    setToast({
-      id: toastIdRef.current,
-      kind,
-      message,
-    })
-
-    toastTimerRef.current = window.setTimeout(() => {
-      toastTimerRef.current = undefined
-      setIsToastClosing(true)
-      toastCloseTimerRef.current = window.setTimeout(() => {
-        setToast(undefined)
-        setIsToastClosing(false)
-        toastCloseTimerRef.current = undefined
-      }, TOAST_CLOSE_MS)
-    }, TOAST_VISIBLE_MS)
-  }
-
-  const dismissToast = () => {
-    if (!toast || isToastClosing) {
-      return
-    }
-
-    if (toastTimerRef.current !== undefined) {
-      window.clearTimeout(toastTimerRef.current)
-      toastTimerRef.current = undefined
-    }
-
-    if (toastCloseTimerRef.current !== undefined) {
-      window.clearTimeout(toastCloseTimerRef.current)
-    }
-
-    setIsToastClosing(true)
-    toastCloseTimerRef.current = window.setTimeout(() => {
-      setToast(undefined)
-      setIsToastClosing(false)
-      toastCloseTimerRef.current = undefined
-    }, TOAST_CLOSE_MS)
-  }
-
-  useEffect(() => () => {
-    if (toastTimerRef.current !== undefined) {
-      window.clearTimeout(toastTimerRef.current)
-    }
-
-    if (toastCloseTimerRef.current !== undefined) {
-      window.clearTimeout(toastCloseTimerRef.current)
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
     }
   }, [])
 
-  const applyMetadata = (person: PersonRecord): PersonRecord => {
-    const metadata = personMetadataById[person.id]
-    if (!metadata) {
-      return person
-    }
-
-    return {
-      ...person,
-      shortBio: metadata.shortBio ?? person.shortBio,
-      imageUrl: metadata.imageUrl ?? person.imageUrl,
-      birthDate: metadata.birthDate ?? person.birthDate,
-      deathDate: metadata.deathDate ?? person.deathDate,
-    }
-  }
-
-  const seedPeopleWithMetadata = useMemo(
-    () => seedWesternEmperors.people.map((person) => applyMetadata(person)),
-    [personMetadataById],
-  )
-
-  const dynamicPeopleWithMetadata = useMemo(
-    () => dynamicPeople.map((person) => applyMetadata(person)),
-    [dynamicPeople, personMetadataById],
-  )
-
-  const dataset = useMemo<EmperorDataset>(
-    () => ({
-      ...seedWesternEmperors,
-      people: [...seedPeopleWithMetadata, ...dynamicPeopleWithMetadata],
-      relationships: [...seedWesternEmperors.relationships, ...dynamicRelationships],
-    }),
-    [dynamicRelationships, dynamicPeopleWithMetadata, seedPeopleWithMetadata],
-  )
+  const dataset = showRelatives ? fullDataset : emperorsOnlyDataset
 
   const peopleById = useMemo(
     () => new Map(dataset.people.map((person) => [person.id, person])),
@@ -253,241 +209,281 @@ function App() {
     return [...relationshipsByPair.values()].find((entry) => entry.id === selectedEdgeId)
   }, [selectedEdgeId, relationshipsByPair])
 
-  const loadDescendantsForPerson = async (
-    personId: string,
-    options?: { bulk?: boolean; suppressMessage?: boolean },
-  ) => {
-    const wasAlreadyLoaded = loadedPersonIdsRef.current.has(personId)
-    const selected = seedWesternEmperors.people.find((person) => person.id === personId)
-    if (!selected) {
-      return { addedEdges: 0, upgradedEdges: 0 }
-    }
-
-    if (!selected.isEmperor) {
-      if (!options?.suppressMessage) {
-        showToast('Descendant loading is only available for emperors.', 'warning')
-      }
-      return { addedEdges: 0, upgradedEdges: 0 }
-    }
-
-    if (options?.bulk && loadedPersonIdsRef.current.has(personId)) {
-      if (!options?.suppressMessage) {
-        showToast('Descendants already loaded for this emperor.', 'warning')
-      }
-      return { addedEdges: 0, upgradedEdges: 0 }
-    }
-
-    if (!options?.bulk && wasAlreadyLoaded) {
-      if (!options?.suppressMessage) {
-        showToast('Descendants already loaded for this emperor.', 'warning')
-      }
-      return { addedEdges: 0, upgradedEdges: 0 }
-    }
-
-    if (!options?.bulk) {
-      setLoadingDescendantsForId(selected.id)
-    }
-
-    try {
-      const precomputed = descendantsDataset.emperors[personId]
-      if (!precomputed) {
-        if (!options?.suppressMessage) {
-          showToast('No precomputed descendants found for this emperor. Run the generator script first.', 'error')
-        }
-        return { addedEdges: 0, upgradedEdges: 0 }
-      }
-
-      if (precomputed.people.length > 0) {
-        setDynamicPeople((prev) => {
-          const seen = new Set(prev.map((person) => person.id))
-          const unique = precomputed.people
-            .map((person) => applyMetadata(person))
-            .filter((person) => !seen.has(person.id))
-          return unique.length > 0 ? [...prev, ...unique] : prev
-        })
-      }
-
-      let addedEdgesCount = 0
-      let upgradedEdgesCount = 0
-      if (precomputed.relationships.length > 0) {
-        setDynamicRelationships((prev) => {
-          const next = [...prev]
-          const indexById = new Map(next.map((edge, index) => [edge.id, index]))
-
-          for (const edge of precomputed.relationships) {
-            const existingIndex = indexById.get(edge.id)
-            if (existingIndex === undefined) {
-              next.push(edge)
-              indexById.set(edge.id, next.length - 1)
-              addedEdgesCount += 1
-              continue
-            }
-
-            const existing = next[existingIndex]
-            if (edge.type === 'child' && edge.isAdopted && !existing.isAdopted) {
-              next[existingIndex] = { ...existing, isAdopted: true }
-              upgradedEdgesCount += 1
-            }
-          }
-
-          return next
-        })
-      }
-
-      setLoadedPersonIds((prev) => {
-        const next = new Set(prev)
-        next.add(personId)
-        return next
-      })
-
-      if (!options?.suppressMessage) {
-        const totalChanges = addedEdgesCount + upgradedEdgesCount
-        if (totalChanges > 0) {
-          showToast(
-            `Descendants loaded successfully (${totalChanges} link${totalChanges === 1 ? '' : 's'}).`,
-            'success',
-          )
-        } else {
-          showToast('Descendants loaded successfully.', 'success')
-        }
-      }
-
-      return {
-        addedEdges: addedEdgesCount,
-        upgradedEdges: upgradedEdgesCount,
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error'
-      if (!options?.suppressMessage) {
-        showToast(`Descendant loading failed: ${message}`, 'error')
-      }
-
-      return { addedEdges: 0, upgradedEdges: 0 }
-    } finally {
-      if (!options?.bulk) {
-        setLoadingDescendantsForId(undefined)
-      }
-    }
-  }
-
-  const loadDescendantsForSelected = async () => {
-    await loadDescendantsForPerson(selectedPersonId)
-  }
-
-  const loadAllConnections = async () => {
-    if (isLoadingAll) {
-      return
-    }
-
-    const emperorIds = seedWesternEmperors.people
-      .filter((person) => person.isEmperor)
-      .map((person) => person.id)
-
-    const remaining = emperorIds.filter((personId) => !loadedPersonIdsRef.current.has(personId))
-    if (remaining.length === 0) {
-      showToast('All emperor descendants are already loaded.', 'warning')
-      return
-    }
-
-    loadAllCancelledRef.current = false
-    setIsLoadingAll(true)
-    setLoadAllProgress({ done: 0, total: remaining.length })
-
-    try {
-      for (let index = 0; index < remaining.length; index += 1) {
-        if (loadAllCancelledRef.current) {
-          showToast('Load all cancelled.', 'warning')
-          return
-        }
-
-        await loadDescendantsForPerson(remaining[index], {
-          bulk: true,
-          suppressMessage: true,
-        })
-
-        setLoadAllProgress({ done: index + 1, total: remaining.length })
-      }
-
-      showToast('All emperor descendants loaded.', 'success')
-    } catch {
-      showToast('Load all failed before completion. You can retry to continue.', 'error')
-    } finally {
-      loadAllCancelledRef.current = false
-      setIsLoadingAll(false)
-      setLoadAllProgress(undefined)
-    }
-  }
-
-  const cancelLoadAllConnections = () => {
-    loadAllCancelledRef.current = true
-  }
-
+  // Falls back to the first emperor if the selected relative was just hidden.
   const selectedPerson = peopleById.get(selectedPersonId) ?? dataset.people[0]
+
+  const relatedGroups = useMemo<RelatedGroup[]>(() => {
+    const groups: Record<'predecessors' | 'successors' | 'parents' | 'children', Map<string, RelatedPerson>> = {
+      predecessors: new Map(),
+      successors: new Map(),
+      parents: new Map(),
+      children: new Map(),
+    }
+
+    const add = (group: Map<string, RelatedPerson>, personId: string, note?: string) => {
+      const person = peopleById.get(personId)
+      if (!person) {
+        return
+      }
+
+      const existing = group.get(personId)
+      if (!existing) {
+        group.set(personId, { person, note })
+      } else if (note && !existing.note) {
+        existing.note = note
+      }
+    }
+
+    for (const edge of dataset.relationships) {
+      if (edge.type === 'succession') {
+        if (edge.to === selectedPerson.id) {
+          add(groups.predecessors, edge.from)
+        } else if (edge.from === selectedPerson.id) {
+          add(groups.successors, edge.to)
+        }
+        continue
+      }
+
+      if (edge.type === 'child') {
+        if (edge.to === selectedPerson.id) {
+          add(groups.parents, edge.from, edge.isAdopted ? 'adoptive' : undefined)
+        } else if (edge.from === selectedPerson.id) {
+          add(groups.children, edge.to, edge.isAdopted ? 'adopted' : undefined)
+        }
+      }
+    }
+
+    return [
+      { title: 'Preceded by', people: [...groups.predecessors.values()] },
+      { title: 'Succeeded by', people: [...groups.successors.values()] },
+      { title: 'Parents', people: [...groups.parents.values()] },
+      { title: 'Children', people: [...groups.children.values()] },
+    ]
+  }, [dataset.relationships, peopleById, selectedPerson.id])
+
+  const searchResults = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase()
+    if (!query) {
+      return []
+    }
+
+    return dataset.people
+      .filter((person) => person.name.toLowerCase().includes(query))
+      .sort((a, b) => {
+        const aStarts = a.name.toLowerCase().startsWith(query) ? 0 : 1
+        const bStarts = b.name.toLowerCase().startsWith(query) ? 0 : 1
+        if (aStarts !== bStarts) {
+          return aStarts - bStarts
+        }
+        return 0
+      })
+      .slice(0, MAX_SEARCH_RESULTS)
+  }, [dataset.people, searchQuery])
+
+  const stats = useMemo(() => {
+    const emperorCount = dataset.people.filter((person) => person.isEmperor).length
+    return {
+      emperors: emperorCount,
+      relatives: dataset.people.length - emperorCount,
+      links: relationshipsByPair.size,
+    }
+  }, [dataset.people, relationshipsByPair])
+
+  const requestViewport = (kind: ViewportRequest['kind'], personId?: string) => {
+    viewportTokenRef.current += 1
+    setViewportRequest({ kind, personId, token: viewportTokenRef.current })
+  }
+
+  const focusPerson = (personId: string) => {
+    setSelectedPersonId(personId)
+    setSelectedEdgeId(undefined)
+    setSearchQuery('')
+    requestViewport('center', personId)
+  }
+
+  const selectedEdgeFrom = selectedEdgeSummary ? peopleById.get(selectedEdgeSummary.from) : undefined
+  const selectedEdgeTo = selectedEdgeSummary ? peopleById.get(selectedEdgeSummary.to) : undefined
 
   return (
     <main className="app-shell">
-      {toast ? (
-        <div
-          key={toast.id}
-          className={`top-toast top-toast--${toast.kind} ${isToastClosing ? 'top-toast--closing' : ''}`}
-          role="status"
-          aria-live="polite"
-        >
-          <span className="top-toast-message">{toast.message}</span>
-          <button
-            type="button"
-            className="subtle-icon-close"
-            onClick={dismissToast}
-            aria-label="Dismiss notification"
-          >
-            ×
-          </button>
-        </div>
-      ) : null}
-
       <EmperorGraph
         elements={elements}
         selectedId={selectedPerson.id}
         selectedEdgeId={selectedEdgeId}
+        viewportRequest={viewportRequest}
         onSelect={(personId) => {
           setSelectedPersonId(personId)
           setSelectedEdgeId(undefined)
         }}
         onSelectEdge={setSelectedEdgeId}
+        onActivate={focusPerson}
       />
+
+      <div className="hud-column">
+        <header className="hud hud-header">
+          <h1 className="app-title">Imperial Lineage Atlas</h1>
+          <p className="app-subtitle">
+            Western Roman emperors from Augustus to Romulus Augustulus, with family ties drawn from Wikidata.
+          </p>
+          <div className="search-box" role="search">
+            <input
+              type="search"
+              className="search-input"
+              placeholder="Search emperors and relatives…"
+              aria-label="Search people on the graph"
+              autoComplete="off"
+              value={searchQuery}
+              onChange={(event) => {
+                setSearchQuery(event.target.value)
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && searchResults.length > 0) {
+                  event.preventDefault()
+                  focusPerson(searchResults[0].id)
+                }
+              }}
+            />
+            {searchResults.length > 0 ? (
+              <ul className="search-results" aria-label="Search results">
+                {searchResults.map((person) => (
+                  <li key={person.id}>
+                    <button
+                      type="button"
+                      className="search-result"
+                      onClick={() => {
+                        focusPerson(person.id)
+                      }}
+                    >
+                      <span>{person.name}</span>
+                      <span className="search-result-meta">
+                        {person.isEmperor ? formatReignSpan(person.reignStart, person.reignEnd) : 'Relative'}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : searchQuery.trim() ? (
+              <p className="search-empty">
+                {showRelatives ? 'No matches.' : 'No matches. Relatives are hidden.'}
+              </p>
+            ) : null}
+          </div>
+          <p className="hint">
+            Click a node for details, double-click to center it. Drag to pan, scroll to zoom.
+          </p>
+        </header>
+
+        <section className="hud hud-legend" aria-label="Legend">
+          <h3>Legend</h3>
+          <div className="legend-grid">
+            <div className="legend-item">
+              <span className="legend-node legend-node--emperor" />
+              <span>Emperor</span>
+            </div>
+            <div className="legend-item">
+              <span className="legend-node legend-node--family" />
+              <span>Relative</span>
+            </div>
+            <div className="legend-item">
+              <span className="edge-legend-line edge-legend-line--succession" />
+              <span>Succession</span>
+            </div>
+            <div className="legend-item">
+              <span className="edge-legend-line edge-legend-line--child" />
+              <span>Child</span>
+            </div>
+            <div className="legend-item">
+              <span className="edge-legend-line edge-legend-line--child-adopted" />
+              <span>Adopted child</span>
+            </div>
+          </div>
+
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={showRelatives}
+              onChange={(event) => {
+                setShowRelatives(event.target.checked)
+              }}
+            />
+            <span>Show relatives and family ties</span>
+          </label>
+
+          <div className="selected-link">
+            <h4>Selected link</h4>
+            {selectedEdgeSummary ? (
+              <>
+                <p className="selected-link-names">
+                  <button
+                    type="button"
+                    className="link-button"
+                    onClick={() => {
+                      focusPerson(selectedEdgeSummary.from)
+                    }}
+                  >
+                    {selectedEdgeFrom?.name ?? selectedEdgeSummary.from}
+                  </button>
+                  <span aria-hidden="true"> → </span>
+                  <button
+                    type="button"
+                    className="link-button"
+                    onClick={() => {
+                      focusPerson(selectedEdgeSummary.to)
+                    }}
+                  >
+                    {selectedEdgeTo?.name ?? selectedEdgeSummary.to}
+                  </button>
+                </p>
+                <div className="edge-legend">
+                  {[...selectedEdgeSummary.labels]
+                    .sort((a, b) => relationPriority(a) - relationPriority(b))
+                    .map((label) => (
+                      <div key={label} className="edge-legend-item">
+                        <span className="edge-legend-label">{formatLinkLabel(label)}</span>
+                        <div className={`edge-legend-line ${relationStyleClass(label)}`} />
+                      </div>
+                    ))}
+                </div>
+              </>
+            ) : (
+              <p className="edge-hint">Click a line in the graph to see who it connects and how.</p>
+            )}
+          </div>
+        </section>
+      </div>
 
       <aside className="hud hud-detail">
         <EmperorDetail
           person={selectedPerson}
-          onLoadDescendants={loadDescendantsForSelected}
-          isLoadingDescendants={loadingDescendantsForId === selectedPerson.id}
-          onLoadAllConnections={loadAllConnections}
-          onCancelLoadAllConnections={cancelLoadAllConnections}
-          isLoadingAllConnections={isLoadingAll}
-          loadAllProgress={loadAllProgress}
+          related={relatedGroups}
+          onSelectPerson={focusPerson}
         />
       </aside>
 
-      <aside className="hud hud-edge">
-        <h3>Selected Link</h3>
-        {selectedEdgeSummary ? (
-          <div className="edge-legend">
-            {[...selectedEdgeSummary.labels]
-              .sort((a, b) => relationPriority(a) - relationPriority(b))
-              .map((label) => (
-                <div key={label} className="edge-legend-item">
-                  <span className="edge-legend-label">{formatLinkLabel(label)}</span>
-                  <div className={`edge-legend-line ${relationStyleClass(label)}`} />
-                </div>
-              ))}
-          </div>
-        ) : (
-          <p className="edge-hint">Tap a line in the graph to inspect its connection type(s).</p>
-        )}
-      </aside>
-
       <footer className="hud hud-bottom">
-        <span>{dataset.people.length} nodes loaded</span>
+        <span className="stats">
+          {stats.emperors} emperors · {stats.relatives} relatives · {stats.links} links
+        </span>
+        <div className="footer-actions">
+          <button
+            type="button"
+            className="footer-button"
+            onClick={() => {
+              requestViewport('center', selectedPerson.id)
+            }}
+          >
+            Center on {selectedPerson.name}
+          </button>
+          <button
+            type="button"
+            className="footer-button"
+            onClick={() => {
+              requestViewport('fit')
+            }}
+          >
+            Fit all
+          </button>
+        </div>
       </footer>
     </main>
   )

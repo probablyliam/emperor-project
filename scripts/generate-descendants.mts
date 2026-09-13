@@ -12,6 +12,7 @@ import type {
 } from '../src/types/domain.ts'
 
 interface WikipediaSummaryResponse {
+  type?: string
   extract?: string
   thumbnail?: {
     source?: string
@@ -247,11 +248,19 @@ async function fetchWikipediaSummary(title: string) {
 async function fetchPersonMetadata(person: PersonRecord): Promise<PrecomputedPersonMetadata> {
   const metadata: PrecomputedPersonMetadata = {}
 
+  // People without an English Wikipedia article carry a Wikidata URL. Looking their bare
+  // label up on Wikipedia returns unrelated pages (given names, genera, other people with the
+  // same name), so they get no enrichment at all.
+  if (/wikidata\.org\//.test(person.wikipediaUrl)) {
+    return metadata
+  }
+
   const summary = await fetchWikipediaSummary(person.wikipediaTitle)
-  if (summary?.extract) {
+  const isDisambiguation = summary?.type === 'disambiguation'
+  if (summary?.extract && !isDisambiguation) {
     metadata.shortBio = summary.extract
   }
-  if (summary?.thumbnail?.source) {
+  if (summary?.thumbnail?.source && !isDisambiguation) {
     metadata.imageUrl = summary.thumbnail.source
   }
 

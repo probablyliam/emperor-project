@@ -1,4 +1,5 @@
 import type { EmperorDataset, RelationType } from '../types/domain'
+import { formatYear } from './format'
 
 export interface GraphElement {
   position?: {
@@ -476,7 +477,10 @@ export function toGraphElements(dataset: EmperorDataset): GraphElement[] {
     position: positionById.get(person.id),
     data: {
       id: person.id,
-      label: person.name,
+      // Emperors show their reign years under the name so the chain reads as a timeline.
+      label: person.isEmperor
+        ? `${person.name}\n${formatYear(person.reignStart)}–${formatYear(person.reignEnd)}`
+        : person.name,
       kind: person.isEmperor ? 'emperor' : 'family',
       terminal: person.isEmperor || childrenByParent.has(person.id) ? 'false' : 'true',
     },
