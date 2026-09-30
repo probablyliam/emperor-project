@@ -1,4 +1,4 @@
-export const UNKNOWN_VALUE = 'Unknown'
+const UNKNOWN_VALUE = 'Unknown'
 
 const MONTH_NAMES = [
   'January',
@@ -15,9 +15,9 @@ const MONTH_NAMES = [
   'December',
 ]
 
-export type Era = 'BCE' | 'CE'
+type Era = 'BCE' | 'CE'
 
-export interface ParsedHistoricalDate {
+interface ParsedHistoricalDate {
   /** Astronomical year (1 BCE = 0, 2 BCE = -1) so arithmetic across eras works. */
   year: number
   /** Year as written by historians (positive, paired with `era`). */
@@ -31,7 +31,7 @@ export interface ParsedHistoricalDate {
  * Parses the compact date strings stored in the dataset, e.g. "63 BCE" or "14-08-19 CE"
  * (year-month-day). Returns undefined for anything else, including "Unknown".
  */
-export function parseHistoricalDate(value?: string): ParsedHistoricalDate | undefined {
+function parseHistoricalDate(value?: string): ParsedHistoricalDate | undefined {
   if (!value) {
     return undefined
   }
@@ -97,7 +97,7 @@ export function calculateReignLengthYears(start: string, end: string) {
   return years >= 0 ? years : undefined
 }
 
-export interface AgeAtDeath {
+interface AgeAtDeath {
   years: number
   /** True when either date lacks a month/day, so the age could be off by one. */
   approximate: boolean

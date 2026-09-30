@@ -462,7 +462,11 @@ function App() {
 
       <footer className="hud hud-bottom">
         <span className="stats">
-          {stats.emperors} emperors · {stats.relatives} relatives · {stats.links} links
+          {stats.emperors} emperors · {stats.relatives} relatives · {stats.links} links · Text from
+          Wikipedia under{' '}
+          <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">
+            CC BY-SA 4.0
+          </a>
         </span>
         <div className="footer-actions">
           <button

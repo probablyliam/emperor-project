@@ -586,6 +586,10 @@ a {
   color: #c9dbf4;
 }
 
+.stats a {
+  color: inherit;
+}
+
 .footer-actions {
   display: flex;
   gap: 0.4rem;

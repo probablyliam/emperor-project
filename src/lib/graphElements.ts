@@ -40,11 +40,6 @@ function getRelationVariant(relationTypes: RelationType[], hasAdoptedChildLink: 
   return 'succession' as const
 }
 
-export const ALL_RELATION_TYPES: RelationType[] = [
-  'succession',
-  'child',
-]
-
 interface FamilyNeighbor {
   id: string
   isAdopted: boolean
