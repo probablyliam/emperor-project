@@ -2,7 +2,11 @@
 
 An interactive map of the Western Roman emperors, from Augustus (27 BCE) to Romulus Augustulus (476 CE). The succession chain is drawn as a graph you can pan and zoom, with each emperor's descendants alongside it: children, adopted heirs and the relatives who linked one dynasty to the next.
 
-Built with React, TypeScript, Vite and Cytoscape.js. All historical data comes from Wikipedia and Wikidata and is precomputed into a JSON file, so the app runs fully offline with no API calls at runtime.
+**Live:** [imperial-lineage.vercel.app](https://imperial-lineage.vercel.app/)
+
+![Succession graph with an emperor selected](docs/screenshot.jpg)
+
+Built with React, TypeScript, Vite and Cytoscape.js. All historical data comes from Wikipedia and Wikidata and is precomputed into a JSON file, so the app makes no API calls at runtime; only the portrait images load from Wikimedia Commons.
 
 ## Features
 
@@ -80,3 +84,9 @@ scripts/
 - Age at death is exact only when both dates are known to the day; otherwise it is marked `~`.
 - Succession follows the commonly listed Western line. Usurpers and Eastern emperors are out of scope.
 - Family links reflect Wikidata claims as of the generation date recorded in the JSON file.
+
+## License
+
+The source code is released under the [MIT License](LICENSE).
+
+Biographies in `src/data/generatedDescendants.json` are excerpts from Wikipedia, available under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/); each entry links back to its source article. Structured data from Wikidata is [CC0](https://creativecommons.org/publicdomain/zero/1.0/). Portraits are loaded from Wikimedia Commons and remain under their individual licenses.
