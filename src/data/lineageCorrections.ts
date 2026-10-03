@@ -118,8 +118,9 @@ export const dateOverrides: DateOverride[] = [
     name: 'Florianus',
     birthDate: null,
     reason:
-      'No source records his birth. Wikidata\'s 19 August 232 is the traditional birthday of his '
-      + 'rival Probus, attached to the wrong emperor.',
+      'His article records no date of birth and cites no source for one. Wikidata gives the exact '
+      + 'day 19 August 232, ten days from the day it gives for his rival Probus (9 August 232), '
+      + 'which looks like Probus\'s date attached to the wrong emperor. Unverified, so not shown.',
     sourceUrl: 'https://en.wikipedia.org/wiki/Florianus',
   },
   {
