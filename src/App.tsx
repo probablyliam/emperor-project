@@ -37,7 +37,7 @@ function applyMetadata(person: PersonRecord): PersonRecord {
 /**
  * Merges the seed emperors with every precomputed family entry. The same relative or link can
  * appear under several emperors, so people are deduplicated by id and a link that any entry marks
- * as an adoption keeps that flag.
+ * as an adoption or as uncertain keeps that flag.
  */
 function buildFullDataset(): EmperorDataset {
   const people: PersonRecord[] = seedWesternEmperors.people.map(applyMetadata)
@@ -62,8 +62,14 @@ function buildFullDataset(): EmperorDataset {
       }
 
       const existing = relationships[existingIndex]
-      if (edge.type === 'child' && edge.isAdopted && !existing.isAdopted) {
-        relationships[existingIndex] = { ...existing, isAdopted: true }
+      if (edge.type !== 'child') {
+        continue
+      }
+
+      const isAdopted = Boolean(existing.isAdopted || edge.isAdopted)
+      const isUncertain = Boolean(existing.isUncertain || edge.isUncertain)
+      if (isAdopted !== Boolean(existing.isAdopted) || isUncertain !== Boolean(existing.isUncertain)) {
+        relationships[existingIndex] = { ...existing, isAdopted, isUncertain }
       }
     }
   }
@@ -79,18 +85,24 @@ const emperorsOnlyDataset: EmperorDataset = {
   relationships: fullDataset.relationships.filter((edge) => edge.type === 'succession'),
 }
 
+/** "child", "child (adopted)", "child (uncertain)" or "child (adopted, uncertain)". */
+function childLinkLabel(edge: RelationshipEdge) {
+  const qualifiers = [edge.isAdopted ? 'adopted' : '', edge.isUncertain ? 'uncertain' : ''].filter(Boolean)
+  return qualifiers.length > 0 ? `child (${qualifiers.join(', ')})` : edge.label
+}
+
+function joinNotes(...notes: Array<string | false | undefined>) {
+  return notes.filter(Boolean).join(', ') || undefined
+}
+
 function formatLinkLabel(label: string) {
   const normalized = label.trim().toLowerCase()
   if (normalized === 'succession') {
     return 'Succession'
   }
 
-  if (normalized === 'child') {
-    return 'Child'
-  }
-
-  if (normalized === 'child (adopted)') {
-    return 'Child (adopted)'
+  if (normalized.startsWith('child')) {
+    return `C${normalized.slice(1)}`
   }
 
   return label
@@ -98,17 +110,18 @@ function formatLinkLabel(label: string) {
 
 function relationStyleClass(label: string) {
   const normalized = label.trim().toLowerCase()
+  const dashed = normalized.includes('uncertain') ? ' edge-legend-line--uncertain' : ''
 
   if (normalized === 'succession') {
     return 'edge-legend-line--succession'
   }
 
-  if (normalized === 'child (adopted)') {
-    return 'edge-legend-line--child-adopted'
+  if (normalized.includes('adopted')) {
+    return `edge-legend-line--child-adopted${dashed}`
   }
 
   if (normalized.startsWith('child')) {
-    return 'edge-legend-line--child'
+    return `edge-legend-line--child${dashed}`
   }
 
   return 'edge-legend-line--default'
@@ -121,7 +134,7 @@ function relationPriority(label: string) {
     return 0
   }
 
-  if (normalized === 'child (adopted)') {
+  if (normalized.includes('adopted')) {
     return 1
   }
 
@@ -173,9 +186,7 @@ function App() {
     for (const edge of dataset.relationships) {
       const key = `${edge.from}=>${edge.to}`
       const existing = grouped.get(key)
-      const relationLabel = edge.type === 'child' && edge.isAdopted
-        ? 'child (adopted)'
-        : edge.label
+      const relationLabel = edge.type === 'child' ? childLinkLabel(edge) : edge.label
 
       if (existing) {
         if (!existing.relationTypes.includes(edge.type)) {
@@ -246,9 +257,9 @@ function App() {
 
       if (edge.type === 'child') {
         if (edge.to === selectedPerson.id) {
-          add(groups.parents, edge.from, edge.isAdopted ? 'adoptive' : undefined)
+          add(groups.parents, edge.from, joinNotes(edge.isAdopted && 'adoptive', edge.isUncertain && 'uncertain'))
         } else if (edge.from === selectedPerson.id) {
-          add(groups.children, edge.to, edge.isAdopted ? 'adopted' : undefined)
+          add(groups.children, edge.to, joinNotes(edge.isAdopted && 'adopted', edge.isUncertain && 'uncertain'))
         }
       }
     }
@@ -395,6 +406,10 @@ function App() {
             <div className="legend-item">
               <span className="edge-legend-line edge-legend-line--child-adopted" />
               <span>Adopted child</span>
+            </div>
+            <div className="legend-item">
+              <span className="edge-legend-line edge-legend-line--child edge-legend-line--uncertain" />
+              <span>Disputed or uncertain</span>
             </div>
           </div>
 

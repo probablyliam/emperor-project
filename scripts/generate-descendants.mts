@@ -1,6 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { dateOverrides, excludedChildClaims } from '../src/data/lineageCorrections.ts'
 import { seedWesternEmperors } from '../src/data/seedWesternEmperors.ts'
 import type {
   PersonRecord,
@@ -13,6 +14,9 @@ import type {
 
 interface WikipediaSummaryResponse {
   type?: string
+  titles?: {
+    normalized?: string
+  }
   extract?: string
   thumbnail?: {
     source?: string
@@ -39,6 +43,7 @@ interface WikidataEntityResponse {
               value?: {
                 id?: string
                 time?: string
+                precision?: number
               }
             }
           }
@@ -59,6 +64,14 @@ interface WikidataEntityResponse {
 }
 
 type WikidataEntity = NonNullable<WikidataEntityResponse['entities']>[string]
+type WikidataClaim = NonNullable<WikidataEntity['claims']>[string][number]
+
+interface PathSegment {
+  from: string
+  to: string
+  isAdopted: boolean
+  isUncertain: boolean
+}
 
 class RateLimitError extends Error {
   constructor(message: string) {
@@ -67,11 +80,41 @@ class RateLimitError extends Error {
   }
 }
 
-const API_USER_AGENT = 'EmperorProject/1.0 (offline descendants generator)'
+// Wikimedia's User-Agent policy asks clients to identify themselves with a way to reach the
+// operator; requests carrying only the runtime's default agent are refused with HTTP 429.
+const API_USER_AGENT =
+  'EmperorProject/1.0 (https://github.com/probablyliam/emperor-project; offline descendants generator)'
 const API_HEADERS = {
+  'User-Agent': API_USER_AGENT,
   'Api-User-Agent': API_USER_AGENT,
 }
 const MAX_DESCENDANT_DEPTH_FROM_SELECTED = 4
+const REQUEST_GAP_MS = 250
+const MAX_RATE_LIMIT_WAIT_SECONDS = 120
+
+// Wikidata time precision: 11 = day, 10 = month, 9 = year, 8 = decade, 7 = century.
+const PRECISION_DAY = 11
+const PRECISION_MONTH = 10
+const PRECISION_YEAR = 9
+const PRECISION_DECADE = 8
+const PRECISION_CENTURY = 7
+
+// Values of "sourcing circumstances" (P1480) / "nature of statement" (P5102) with which Wikidata
+// marks a statement as doubtful: probably, possibly, presumably, disputed.
+const UNCERTAIN_STATEMENT_QUALIFIER_IDS = new Set([
+  'Q56644435',
+  'Q30230067',
+  'Q18122778',
+  'Q18912752',
+])
+// For a date the same qualifiers, plus "circa", all mean the value is approximate.
+const UNCERTAIN_DATE_QUALIFIER_IDS = new Set([...UNCERTAIN_STATEMENT_QUALIFIER_IDS, 'Q5727902'])
+
+const excludedChildKeys = new Set(
+  excludedChildClaims.map((claim) => `${claim.parentItemId}|${claim.childItemId}`),
+)
+
+const dateOverrideByItemId = new Map(dateOverrides.map((override) => [override.itemId, override]))
 
 const entityByTitleCache = new Map<string, { itemId: string; entity: WikidataEntity }>()
 const entityByIdCache = new Map<string, WikidataEntity>()
@@ -94,25 +137,82 @@ function edgeEvidence(sourceUrl: string, retrievedAt: string): SourceEvidence[] 
   ]
 }
 
-function formatWikidataTime(time?: string) {
-  if (!time) {
-    return undefined
+/**
+ * Picks the date Wikidata itself would show: deprecated claims are ignored, a preferred-rank claim
+ * beats normal-rank ones, and among those the most precise wins (first listed on a tie).
+ */
+function pickBestTimeClaim(claims?: WikidataClaim[]) {
+  const usable = (claims ?? []).filter(
+    (claim) => claim.rank !== 'deprecated' && claim.mainsnak?.datavalue?.value?.time,
+  )
+  const preferred = usable.filter((claim) => claim.rank === 'preferred')
+  const pool = preferred.length > 0 ? preferred : usable
+
+  let best: WikidataClaim | undefined
+  for (const claim of pool) {
+    const precision = claim.mainsnak?.datavalue?.value?.precision ?? 0
+    if (!best || precision > (best.mainsnak?.datavalue?.value?.precision ?? 0)) {
+      best = claim
+    }
+  }
+  return best
+}
+
+function ordinalSuffix(value: number) {
+  const lastTwo = value % 100
+  if (lastTwo >= 11 && lastTwo <= 13) {
+    return 'th'
   }
 
-  const match = time.match(/^([+-])(\d+)-(\d{2})-(\d{2})T/)
+  return ['th', 'st', 'nd', 'rd'][value % 10] ?? 'th'
+}
+
+/**
+ * Renders a Wikidata time claim in the dataset's compact form, keeping only as much detail as the
+ * claim's precision supports. Wikidata pads vague dates with a placeholder month and day
+ * ("+0101-01-01" at century precision means "2nd century"), so the precision decides the output,
+ * never the padded digits. `parseHistoricalDate` in src/lib/format.ts reads these strings back.
+ */
+function formatWikidataDateClaim(claim?: WikidataClaim) {
+  const value = claim?.mainsnak?.datavalue?.value
+  const match = value?.time?.match(/^([+-])(\d+)-(\d{2})-(\d{2})T/)
   if (!match) {
     return undefined
   }
 
   const [, sign, rawYear, month, day] = match
-  const trimmedYear = String(Number.parseInt(rawYear, 10))
-  const suffix = sign === '-' ? ' BCE' : ' CE'
-
-  if (month === '00' || day === '00') {
-    return `${trimmedYear}${suffix}`
+  const year = Number.parseInt(rawYear, 10)
+  const precision = value?.precision ?? PRECISION_YEAR
+  if (year === 0 || precision < PRECISION_CENTURY) {
+    return undefined
   }
 
-  return `${trimmedYear}-${month}-${day}${suffix}`
+  const era = sign === '-' ? 'BCE' : 'CE'
+  const isUncertain = [...(claim?.qualifiers?.P1480 ?? []), ...(claim?.qualifiers?.P5102 ?? [])]
+    .some((qualifier) => UNCERTAIN_DATE_QUALIFIER_IDS.has(qualifier.datavalue?.value?.id ?? ''))
+  const prefix = isUncertain ? 'c. ' : ''
+
+  const century = Math.ceil(year / 100)
+  const centuryText = `${century}${ordinalSuffix(century)} century ${era}`
+  if (precision === PRECISION_CENTURY) {
+    return `${prefix}${centuryText}`
+  }
+
+  if (precision === PRECISION_DECADE) {
+    const decade = Math.floor(year / 10) * 10
+    // There is no sensible "0s"; fall back to the century for the first decade of an era.
+    return `${prefix}${decade === 0 ? centuryText : `${decade}s ${era}`}`
+  }
+
+  if (precision >= PRECISION_DAY && month !== '00' && day !== '00') {
+    return `${prefix}${year}-${month}-${day} ${era}`
+  }
+
+  if (precision >= PRECISION_MONTH && month !== '00') {
+    return `${prefix}${year}-${month} ${era}`
+  }
+
+  return `${prefix}${year} ${era}`
 }
 
 function wait(ms: number) {
@@ -123,6 +223,8 @@ function wait(ms: number) {
 
 async function fetchJsonWithRetry<T>(url: string, label: string) {
   for (let attempt = 0; attempt < 4; attempt += 1) {
+    // Requests run one at a time with a pause between them to stay well inside the rate limits.
+    await wait(REQUEST_GAP_MS)
     const response = await fetch(url, {
       headers: API_HEADERS,
     })
@@ -140,6 +242,19 @@ async function fetchJsonWithRetry<T>(url: string, label: string) {
 
     if (response.status === 429) {
       const retryAfter = response.headers.get('retry-after')
+      const retryAfterSeconds = Number.parseInt(retryAfter ?? '', 10)
+      // A short Retry-After is the server asking for a pause, so take it and carry on. A long or
+      // missing one means the run should stop.
+      if (
+        Number.isFinite(retryAfterSeconds)
+        && retryAfterSeconds <= MAX_RATE_LIMIT_WAIT_SECONDS
+        && attempt < 3
+      ) {
+        console.warn(`[${label}] Rate limited; waiting ${retryAfterSeconds} second(s) as requested.`)
+        await wait((retryAfterSeconds + 1) * 1000)
+        continue
+      }
+
       const waitHint = retryAfter
         ? ` Retry-After: ${retryAfter} second(s).`
         : ''
@@ -208,6 +323,11 @@ async function fetchWikidataEntities(itemIds: string[]) {
     for (const [itemId, entity] of Object.entries(payload.entities ?? {})) {
       if (entity) {
         entityByIdCache.set(itemId, entity)
+        // Lets the later metadata pass find this person by article title without asking again.
+        const title = entity.sitelinks?.enwiki?.title
+        if (title && !entityByTitleCache.has(title)) {
+          entityByTitleCache.set(title, { itemId, entity })
+        }
       }
     }
 
@@ -245,31 +365,19 @@ async function fetchWikipediaSummary(title: string) {
   }
 }
 
-async function fetchPersonMetadata(person: PersonRecord): Promise<PrecomputedPersonMetadata> {
-  const metadata: PrecomputedPersonMetadata = {}
-
-  // People without an English Wikipedia article carry a Wikidata URL. Looking their bare
-  // label up on Wikipedia returns unrelated pages (given names, genera, other people with the
-  // same name), so they get no enrichment at all.
-  if (/wikidata\.org\//.test(person.wikipediaUrl)) {
-    return metadata
-  }
-
-  const summary = await fetchWikipediaSummary(person.wikipediaTitle)
-  const isDisambiguation = summary?.type === 'disambiguation'
-  if (summary?.extract && !isDisambiguation) {
-    metadata.shortBio = summary.extract
-  }
-  if (summary?.thumbnail?.source && !isDisambiguation) {
-    metadata.imageUrl = summary.thumbnail.source
-  }
-
-  const wikidata = await fetchWikidataEntityByTitle(person.wikipediaTitle)
-  const birthTime = wikidata?.entity?.claims?.P569?.[0]?.mainsnak?.datavalue?.value?.time
-  const deathTime = wikidata?.entity?.claims?.P570?.[0]?.mainsnak?.datavalue?.value?.time
-
-  const birthDate = formatWikidataTime(birthTime)
-  const deathDate = formatWikidataTime(deathTime)
+function applyLifeDates(
+  metadata: PrecomputedPersonMetadata,
+  itemId?: string,
+  entity?: WikidataEntity,
+) {
+  // A curated override wins over Wikidata; an explicit null drops the date altogether.
+  const override = itemId ? dateOverrideByItemId.get(itemId) : undefined
+  const birthDate = override?.birthDate !== undefined
+    ? override.birthDate
+    : formatWikidataDateClaim(pickBestTimeClaim(entity?.claims?.P569))
+  const deathDate = override?.deathDate !== undefined
+    ? override.deathDate
+    : formatWikidataDateClaim(pickBestTimeClaim(entity?.claims?.P570))
 
   if (birthDate) {
     metadata.birthDate = birthDate
@@ -277,6 +385,40 @@ async function fetchPersonMetadata(person: PersonRecord): Promise<PrecomputedPer
   if (deathDate) {
     metadata.deathDate = deathDate
   }
+}
+
+async function fetchPersonMetadata(person: PersonRecord): Promise<PrecomputedPersonMetadata> {
+  const metadata: PrecomputedPersonMetadata = {}
+
+  // People without an English Wikipedia article carry a Wikidata URL. Looking their bare
+  // label up on Wikipedia returns unrelated pages (given names, genera, other people with the
+  // same name), so they get no biography or portrait. Their dates are safe to take, because the
+  // item id in the URL identifies them exactly.
+  const wikidataItemId = person.wikipediaUrl.match(/wikidata\.org\/wiki\/(Q\d+)/)?.[1]
+  if (wikidataItemId) {
+    const entities = await fetchWikidataEntities([wikidataItemId])
+    applyLifeDates(metadata, wikidataItemId, entities[wikidataItemId])
+    return metadata
+  }
+
+  const summary = await fetchWikipediaSummary(person.wikipediaTitle)
+  const isDisambiguation = summary?.type === 'disambiguation'
+  // Some relatives' titles redirect to the article of a spouse or parent. The summary then
+  // describes that other person, so it must not be used as this person's biography or portrait.
+  const resolvedTitle = summary?.titles?.normalized
+  const isRedirect =
+    resolvedTitle !== undefined
+    && normalizeTitle(resolvedTitle) !== normalizeTitle(person.wikipediaTitle)
+  const isOwnArticle = !isDisambiguation && !isRedirect
+  if (summary?.extract && isOwnArticle) {
+    metadata.shortBio = summary.extract
+  }
+  if (summary?.thumbnail?.source && isOwnArticle) {
+    metadata.imageUrl = summary.thumbnail.source
+  }
+
+  const wikidata = await fetchWikidataEntityByTitle(person.wikipediaTitle)
+  applyLifeDates(metadata, wikidata?.itemId, wikidata?.entity)
 
   return metadata
 }
@@ -334,7 +476,7 @@ function isAdoptedClaim(
 
 async function buildDescendantsForEmperor(
   selected: PersonRecord,
-  emperorTitleLookup: Map<string, string>,
+  emperorIdByItemId: Map<string, string>,
   retrievedAt: string,
 ): Promise<PrecomputedDescendantEntry> {
   const selectedLookup = await fetchWikidataEntityByTitle(selected.wikipediaTitle)
@@ -398,7 +540,9 @@ async function buildDescendantsForEmperor(
       return undefined
     }
 
-    const emperorId = title ? emperorTitleLookup.get(normalizeTitle(title)) : undefined
+    // Matched by Wikidata item rather than article title, so a renamed or redirected article
+    // cannot turn an emperor into a duplicate "relative" node.
+    const emperorId = emperorIdByItemId.get(itemId)
     if (emperorId) {
       return emperorId
     }
@@ -436,6 +580,7 @@ async function buildDescendantsForEmperor(
     from: string,
     to: string,
     isAdopted: boolean,
+    isUncertain: boolean,
     sourceUrl: string,
     idPrefix: string,
   ) => {
@@ -444,6 +589,9 @@ async function buildDescendantsForEmperor(
     if (existing) {
       if (isAdopted && !existing.isAdopted) {
         existing.isAdopted = true
+      }
+      if (isUncertain && !existing.isUncertain) {
+        existing.isUncertain = true
       }
       return
     }
@@ -455,18 +603,22 @@ async function buildDescendantsForEmperor(
       type: 'child',
       label: 'child',
       isAdopted,
+      isUncertain,
       evidence: edgeEvidence(sourceUrl, retrievedAt),
     }
     nextEdges.push(edge)
     childEdgeByPair.set(pairKey, edge)
   }
 
-  const isParentChildLinkAdopted = async (
+  /**
+   * Reads how the link is qualified, from the parent's "child" claim and from the child's own
+   * claims about that parent: whether it is an adoption, and whether Wikidata marks it as
+   * disputed or otherwise doubtful.
+   */
+  const describeParentChildLink = async (
     parentItemId: string,
     childItemId: string,
-    relationClaim: {
-      qualifiers?: Record<string, Array<{ datavalue?: { value?: { id?: string } } }>>
-    },
+    relationClaim: WikidataClaim,
     childEntity?: WikidataEntity,
   ) => {
     const resolvedChildEntity = childEntity ?? await ensureEntity(childItemId)
@@ -475,25 +627,25 @@ async function buildDescendantsForEmperor(
       ...(resolvedChildEntity?.claims?.P25 ?? []),
       ...(resolvedChildEntity?.claims?.P1038 ?? []),
     ].filter((claim) => claim.rank !== 'deprecated' && claimEntityId(claim) === parentItemId)
+    const linkClaims = [relationClaim, ...childSideClaims]
 
-    const adoptedRoleIds = await ensureRoleEntities([relationClaim, ...childSideClaims])
-    return (
-      isAdoptedClaim(relationClaim, adoptedRoleIds)
-      || childSideClaims.some((claim) => isAdoptedClaim(claim, adoptedRoleIds))
-    )
+    const adoptedRoleIds = await ensureRoleEntities(linkClaims)
+    return {
+      isAdopted: linkClaims.some((claim) => isAdoptedClaim(claim, adoptedRoleIds)),
+      isUncertain: linkClaims.some((claim) =>
+        [...(claim.qualifiers?.P1480 ?? []), ...(claim.qualifiers?.P5102 ?? [])].some((qualifier) =>
+          UNCERTAIN_STATEMENT_QUALIFIER_IDS.has(qualifier.datavalue?.value?.id ?? ''),
+        ),
+      ),
+    }
   }
 
   const isEmperorItem = (itemId: string) => {
-    const title = entityCache[itemId]?.sitelinks?.enwiki?.title
-    if (!title) {
-      return false
-    }
-
-    const emperorId = emperorTitleLookup.get(normalizeTitle(title))
+    const emperorId = emperorIdByItemId.get(itemId)
     return Boolean(emperorId && emperorId !== selected.id)
   }
 
-  const materializePath = (path: Array<{ from: string; to: string; isAdopted: boolean }>) => {
+  const materializePath = (path: PathSegment[]) => {
     for (const segment of path) {
       const fromPersonId =
         segment.from === selectedItemId ? selected.id : ensurePersonForItem(segment.from)
@@ -510,6 +662,7 @@ async function buildDescendantsForEmperor(
         fromPersonId,
         toPersonId,
         segment.isAdopted,
+        segment.isUncertain,
         sourceTitle ? wikipediaUrl(sourceTitle) : `https://www.wikidata.org/wiki/${segment.from}`,
         'lineage',
       )
@@ -519,7 +672,7 @@ async function buildDescendantsForEmperor(
   const exploreDescendants = async (
     currentItemId: string,
     depth: number,
-    path: Array<{ from: string; to: string; isAdopted: boolean }>,
+    path: PathSegment[],
     visitedInPath: Set<string>,
   ) => {
     if (depth >= MAX_DESCENDANT_DEPTH_FROM_SELECTED) {
@@ -529,9 +682,18 @@ async function buildDescendantsForEmperor(
     const currentEntity = currentItemId === selectedItemId ? selectedEntity : await ensureEntity(currentItemId)
     const childClaims = (currentEntity?.claims?.P40 ?? []).filter((claim) => claim.rank !== 'deprecated')
 
+    // One request for all of this person's children instead of one request per child.
+    await fetchWikidataEntities(
+      childClaims.map(claimEntityId).filter((itemId): itemId is string => Boolean(itemId)),
+    )
+
     for (const claim of childClaims) {
       const childItemId = claimEntityId(claim)
       if (!childItemId || visitedInPath.has(childItemId)) {
+        continue
+      }
+
+      if (excludedChildKeys.has(`${currentItemId}|${childItemId}`)) {
         continue
       }
 
@@ -540,8 +702,8 @@ async function buildDescendantsForEmperor(
         continue
       }
 
-      const isAdopted = await isParentChildLinkAdopted(currentItemId, childItemId, claim, childEntity)
-      const nextPath = [...path, { from: currentItemId, to: childItemId, isAdopted }]
+      const link = await describeParentChildLink(currentItemId, childItemId, claim, childEntity)
+      const nextPath = [...path, { from: currentItemId, to: childItemId, ...link }]
 
       if (depth === 0 || isEmperorItem(childItemId)) {
         materializePath(nextPath)
@@ -597,9 +759,17 @@ async function main() {
   const sliced = count ? emperors.slice(startIndex, startIndex + count) : emperors.slice(startIndex)
   const targetEmperors = sliced
 
-  const emperorTitleLookup = new Map(
-    emperors.map((person) => [normalizeTitle(person.wikipediaTitle), person.id]),
-  )
+  // Every emperor is resolved up front, even on a partial run, so that a relative who is also an
+  // emperor is always recognised as one.
+  const emperorIdByItemId = new Map<string, string>()
+  for (const emperor of emperors) {
+    const lookup = await fetchWikidataEntityByTitle(emperor.wikipediaTitle)
+    if (lookup) {
+      emperorIdByItemId.set(lookup.itemId, emperor.id)
+    } else {
+      console.warn(`No Wikidata item found for ${emperor.name} ("${emperor.wikipediaTitle}")`)
+    }
+  }
 
   const scriptDir = fileURLToPath(new URL('.', import.meta.url))
   const outputPath = resolve(scriptDir, '..', 'src', 'data', 'generatedDescendants.json')
@@ -630,7 +800,7 @@ async function main() {
       console.log(`[${counter}] ${emperor.name}`)
       descendantsByEmperor[emperor.id] = await buildDescendantsForEmperor(
         emperor,
-        emperorTitleLookup,
+        emperorIdByItemId,
         generatedAt,
       )
     } catch (error) {
@@ -693,6 +863,11 @@ async function main() {
   await writeFile(outputPath, `${JSON.stringify(output, null, 2)}\n`, 'utf8')
 
   console.log(`Wrote ${outputPath}`)
+  console.log(
+    `Corrections from src/data/lineageCorrections.ts: ${excludedChildClaims.length} child claim(s) `
+    + `skipped, ${dateOverrides.length} person(s) with overridden dates.`,
+  )
+  console.log('Run "npm run audit:data" to check the result for impossible dates and links.')
   console.log(`Total in file: ${Object.keys(mergedEmperors).length} emperor(s). This run — Success: ${Object.keys(descendantsByEmperor).length}, Failures: ${failures.length}`)
 }
 

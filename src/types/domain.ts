@@ -27,6 +27,8 @@ export interface RelationshipEdge {
   type: RelationType
   label: string
   isAdopted?: boolean
+  /** True when the source itself qualifies the link as disputed, possible or presumed. */
+  isUncertain?: boolean
   evidence: SourceEvidence[]
 }
 

@@ -16,6 +16,8 @@ export interface GraphElement {
     relationType?: RelationType
     relationTypes?: RelationType[]
     relationVariant?: 'succession' | 'child' | 'child-adopted' | 'mixed'
+    /** Set on links the source marks as disputed or doubtful; drawn dashed. */
+    uncertain?: 'true' | 'false'
     arcBend?: number
   }
 }
@@ -488,6 +490,7 @@ export function toGraphElements(dataset: EmperorDataset): GraphElement[] {
     labels: Set<string>
     relationTypes: Set<RelationType>
     hasAdoptedChildLink: boolean
+    hasUncertainChildLink: boolean
   }>()
 
   for (const edge of dataset.relationships) {
@@ -504,6 +507,9 @@ export function toGraphElements(dataset: EmperorDataset): GraphElement[] {
       if (edge.type === 'child' && edge.isAdopted) {
         existing.hasAdoptedChildLink = true
       }
+      if (edge.type === 'child' && edge.isUncertain) {
+        existing.hasUncertainChildLink = true
+      }
       continue
     }
 
@@ -514,6 +520,7 @@ export function toGraphElements(dataset: EmperorDataset): GraphElement[] {
       labels: new Set([edge.label]),
       relationTypes: new Set([edge.type]),
       hasAdoptedChildLink: edge.type === 'child' && Boolean(edge.isAdopted),
+      hasUncertainChildLink: edge.type === 'child' && Boolean(edge.isUncertain),
     })
   }
 
@@ -559,6 +566,7 @@ export function toGraphElements(dataset: EmperorDataset): GraphElement[] {
         relationType: relationTypes[0],
         relationTypes,
         relationVariant: getRelationVariant(relationTypes, relationship.hasAdoptedChildLink),
+        uncertain: relationship.hasUncertainChildLink ? 'true' : 'false',
         arcBend,
       },
     })

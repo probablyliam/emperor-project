@@ -9,6 +9,8 @@
     "build:data": "tsx scripts/generate-descendants.mts",
     "build:data:sample": "tsx scripts/generate-descendants.mts --count 10",
     "build:data:resume": "tsx scripts/generate-descendants.mts --from",
+    "audit:data": "tsx scripts/audit-lineage.mts",
+    "audit:wikipedia": "tsx scripts/compare-wikipedia.mts",
     "lint": "eslint .",
     "preview": "vite preview"
   },

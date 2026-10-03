@@ -85,7 +85,7 @@ const emperorSeeds: EmperorSeed[] = [
   { id: 'constans', name: 'Constans', wikipediaTitle: 'Constans', reignStart: '337 CE', reignEnd: '350 CE', predecessors: ['constantine-i'] },
   { id: 'constantius-ii', name: 'Constantius II', wikipediaTitle: 'Constantius II', reignStart: '337 CE', reignEnd: '361 CE', predecessors: ['constantine-i'] },
   { id: 'julian', name: 'Julian', wikipediaTitle: 'Julian (emperor)', reignStart: '361 CE', reignEnd: '363 CE', predecessors: ['constantius-ii'] },
-  { id: 'jovian', name: 'Jovian (emperor)', wikipediaTitle: 'Jovian (emperor)', reignStart: '363 CE', reignEnd: '364 CE', predecessors: ['julian'] },
+  { id: 'jovian', name: 'Jovian', wikipediaTitle: 'Jovian (emperor)', reignStart: '363 CE', reignEnd: '364 CE', predecessors: ['julian'] },
   { id: 'valentinian-i', name: 'Valentinian I', wikipediaTitle: 'Valentinian I', reignStart: '364 CE', reignEnd: '375 CE', predecessors: ['jovian'] },
   { id: 'valens', name: 'Valens', wikipediaTitle: 'Valens', reignStart: '364 CE', reignEnd: '378 CE', predecessors: ['valentinian-i'] },
   { id: 'gratian', name: 'Gratian', wikipediaTitle: 'Gratian', reignStart: '367 CE', reignEnd: '383 CE', predecessors: ['valentinian-i'] },

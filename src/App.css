@@ -295,6 +295,12 @@
   background: linear-gradient(90deg, #dba6ff, #9f74c4);
 }
 
+/* Cuts gaps into whichever colour the line already has, matching the dashed links in the graph. */
+.edge-legend-line--uncertain {
+  border-radius: 0;
+  mask-image: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 10px);
+}
+
 .edge-legend-line--default {
   background: linear-gradient(90deg, rgba(242, 245, 255, 0.95), rgba(187, 200, 224, 0.72));
 }

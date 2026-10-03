@@ -169,6 +169,14 @@ export function EmperorGraph({
       },
     },
     {
+      // Links the source marks as disputed or doubtful keep their colour but are drawn dashed.
+      selector: 'edge[uncertain = "true"]',
+      style: {
+        'line-style': 'dashed',
+        'line-dash-pattern': [7, 5],
+      },
+    },
+    {
       // Links touching the selected person stand out from the rest of the graph.
       selector: `edge[source = "${selectedId}"], edge[target = "${selectedId}"]`,
       style: {
